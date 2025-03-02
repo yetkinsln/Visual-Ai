@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head> 
+    
+    <style>
+body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at top, #243B55, #141E30);
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+}
+
+/* Yıldızları oluştur */
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle 5s infinite ease-in-out alternate;
+    z-index: -1;
+}
+
+/* Yumuşak parlayan yıldız efekti */
+@keyframes twinkle {
+    0% { opacity: 0.1; transform: scale(0.8); }
+    50% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 0.1; transform: scale(0.8); }
+}
+
+
+
+  </style>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const numStars = 150;
+        const body = document.body;
+    
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.classList.add("star");
+            star.style.top = Math.random() * 100 + "vh";
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.animationDuration = Math.random() * 3 + 3 + "s"; 
+            body.appendChild(star);
+        }
+    });
+    </script>
+    
+</html>

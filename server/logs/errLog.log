@@ -1,0 +1,10 @@
+20250221	16:33:22	be1dd60f-701f-4790-8ff4-009225980dfe	Error: ENOENT: no such file or directory, stat 'C:\Users\yetki\OneDrive\Masaüstü\Tez\server\views\404.html'	GET	/favicon.ico	undefined
+20250221	16:38:07	6b9a02b6-ee4b-4ec3-9958-2fa9edba01ac	Error: ENOENT: no such file or directory, stat 'C:\Users\yetki\OneDrive\Masaüstü\Tez\server\views\404.html'	GET	/login	undefined
+20250221	16:38:19	28e972a6-0c38-47cb-9659-702d3fa1a89b	Error: ENOENT: no such file or directory, stat 'C:\Users\yetki\OneDrive\Masaüstü\Tez\server\views\404.html'	GET	/login	undefined
+20250221	16:38:54	125a97c9-cce7-4b25-8ff6-25d556d88d34	Error: ENOENT: no such file or directory, stat 'C:\Users\yetki\OneDrive\Masaüstü\Tez\server\views\404.html'	POST	/login	undefined
+20250221	16:40:38	9e0e885e-0eda-4e86-987d-84461dffb28b	Error: ENOENT: no such file or directory, stat 'C:\Users\yetki\OneDrive\Masaüstü\Tez\server\views\404.html'	POST	/login	undefined
+20250223	14:08:15	74dd65ed-2f66-470a-b024-bc61b66f6b5f	TypeError: res.statusCode is not a function	POST	/login	http://localhost:5173
+20250225	13:02:53	12dbb98f-5409-479d-904c-947353c914b6	Error: Cannot set headers after they are sent to the client	POST	/login	http://localhost:5173
+20250225	13:02:55	0ad12c6c-a620-4141-b47b-09533e8aab7a	Error: Cannot set headers after they are sent to the client	POST	/login	http://localhost:5173
+20250225	13:04:01	cb3fd7cb-87f1-4534-ac98-c92d2c6c6d49	ReferenceError: alert is not defined	POST	/login	http://localhost:5173
+20250225	13:05:24	f09520d1-29ef-4085-963c-c03fef6154ab	Error: Cannot set headers after they are sent to the client	POST	/login	http://localhost:5173

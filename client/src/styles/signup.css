@@ -1,0 +1,100 @@
+/* Genel stil */
+.signup-header {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.signup-container {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+}
+
+.signup-form {
+    display: flex;
+    margin-top: 10px;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+.signup-form label {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid black;
+    border-radius: 6px;
+    font-size: 14px;
+    background: rgba(235, 234, 234, 0.5);
+    color: black;
+    transition: all 0.3s ease-in-out;
+}
+
+.signup-form button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: dodgerblue;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+.signup-form button:hover {
+    background: #005bb5;
+    transform: scale(1.05);
+}
+
+.signup-form span {
+    font-size: 14px;
+    color: white;
+    margin-top: 15px;
+}
+
+.signup-form span button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 5px;
+}
+
+.signup-form span button:hover {
+    background-color:rgba(255, 255, 255, 0.1);
+    color: limegreen;
+}
+
+.error-message {
+    font: message-box;
+    color: red;
+    font-size: 14px;
+    font: bold;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}

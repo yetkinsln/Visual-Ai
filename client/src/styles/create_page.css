@@ -1,0 +1,151 @@
+/* Genel Sayfa Stili */
+.cp-body {
+    font-family: 'Arial', sans-serif;
+    background-color: transparent;
+    color: white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: top;
+    height: 100vh;
+    flex-direction: row;
+    margin: 0;
+    
+  }
+  
+  /* Ana Konteyner */
+  .cp-body-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+
+  /* Dosya Yükleme Butonu */
+  .file-upload {
+    display:inline-block;
+    min-width: 150px;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.3s;
+    margin-top: 20px;
+  }
+  
+  .file-upload:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 138, 0, 0.5);
+  }
+  
+  .cp-body input[type="file"] {
+    display: none;
+  }
+  
+  /* Tablo Stili */
+  .table-container {
+    max-height: 500px;
+    overflow: auto;
+    margin-top: 20px;
+    overflow-x:hidden;
+  }
+  
+  .cp-body table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    
+  }
+  
+  .cp-body th, td {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+    opacity: 1;
+  }
+  
+ .cp-body th {
+    background-color: #44475a;
+    color: #f8f8f2;
+  }
+  
+  
+  .cp-body td {
+    background-color: #3b3f56;
+  }
+  
+  .cp-body tr:hover td {
+    background-color: #4f5372;
+  }
+  
+  .file-title{
+    color: goldenrod;
+  }
+
+  /* Özellik Seçimi (Combobox) */
+.feature-selector {
+  margin-top: 20px;
+  
+  text-align: center;
+}
+
+.feature-selector label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+  color: orangered;
+}
+
+.feature-selector select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: orangered;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+  background-color: black;
+}
+
+.feature-selector select:hover {
+  border-color: #00bcd4;
+}
+
+/* Devam Et Butonu */
+.feature-selector button {
+  background: orangered;
+  color: black;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 12px;
+  transition: transform 0.2s, box-shadow 0.3s;
+  margin-bottom: 20px;
+}
+
+.feature-selector button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px red;
+}

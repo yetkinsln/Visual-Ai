@@ -1,0 +1,87 @@
+.container {
+    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kart Stili */
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    margin: 0 5%;
+    border-radius: 12px;
+    
+    background-color: transparent;
+    box-shadow: 0 6px 12px rgba(0, 255, 255, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+    backdrop-filter: blur(5px);
+    color: #ffffff;
+}
+
+.card p {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Buton Stili */
+.content-button {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 40px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #00bcd4, #009688);
+    box-shadow: 0px 4px 10px rgba(0, 255, 255, 0.4);
+}
+
+.content-button:hover {
+    background: linear-gradient(135deg, #009688, #00bcd4);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0px 6px 12px rgba(0, 255, 255, 0.6);
+}
+
+/* Başlık Stili */
+.content-title {
+    color: #00bcd4;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0px 0px 10px rgba(0, 255, 255, 0.6), -1px -1px 0px black;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+
+   
+}
+
+/* Görsel Stili */
+.content-img {
+    width: 100%;
+    max-height: 150px;
+    border-radius: 12px;
+    box-shadow: 2px 2px 15px rgba(0, 255, 255, 0.5);
+    margin-bottom: 15px;
+    object-fit:contain;
+    transition: transform 0.3s ease;
+    background-color: white;
+}
+
+.content-img:hover {
+    transform: scale(1.05);
+}

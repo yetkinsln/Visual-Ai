@@ -1,0 +1,124 @@
+/* Genel Navbar Stili */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(20, 20, 20, 0.9);
+    padding: 12px 20px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Logo Stili */
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-left: 10px;
+    letter-spacing: 1px;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.logo:hover {
+    color: #0abdc6;
+    text-shadow: 0px 0px 10px #0abdc6;
+}
+
+/* Menü Stili */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links li {
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease-in-out, text-shadow 0.3s ease;
+    padding: 10px;
+}
+
+.nav-links li:hover {
+    background: rgba(10, 189, 198, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0px 2px 12px rgba(10, 189, 198, 0.3);
+}
+
+.nav-links a:hover {
+    color: #0abdc6;
+    text-shadow: 0px 0px 10px #0abdc6;
+}
+
+/* Hamburger Menü (Mobil İçin) */
+.menu-icon {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.bar {
+    width: 30px;
+    height: 3px;
+    background-color: #ffffff;
+    margin: 5px 0;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: rgba(20, 20, 20, 0.95);
+        width: 220px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links li {
+        padding: 12px 0;
+        width: 100%;
+    }
+
+    .menu-icon {
+        display: flex;
+    }
+}
+
+/* Hamburger Menü Animasyonu */
+.menu-icon.open .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+    background-color: #0abdc6;
+}
+
+.menu-icon.open .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-icon.open .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+    background-color: #0abdc6;
+}
