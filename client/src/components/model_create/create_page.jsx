@@ -49,20 +49,24 @@ const CsvUploader = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           data: data,
-          selectedFeature: feature
+          selectedFeature: feature,
         }),
       });
-
+    
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorMessage = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${errorMessage}`);
       }
-
+    
       const result = await response.json();
-      setAnalyze(result.problem_type || "Problem Türü Analiz Edilirken Hata Oluştu.");
+      
+      // problem_type anahtarı yoksa hata mesajı döndür
+      setAnalyze(result.problem_type || `Beklenmeyen Yanıt: ${JSON.stringify(result)}`);
     } catch (error) {
-      console.error("Hata:", error);
-      setAnalyze("Sunucudan cevap alınamadı.");
+      console.error("API Hata:", error);
+      setAnalyze("Veri analiz için uygun değil.");
     }
+    
   };
 
   const goToTraining = () => {
@@ -70,7 +74,7 @@ const CsvUploader = () => {
       alert("Lütfen bir özellik seçin!");
       return;
     }
-    navigate("/train", { state: { feature: selectedFeature, data: data } });
+    navigate("/train", { state: { feature: selectedFeature, data: data, analyze: analyze } });
   };
 
   return (
@@ -123,6 +127,8 @@ const CsvUploader = () => {
         {features.length > 0 && (
           <div className="feature-selector">
             <label>Çıktı Özelliğini Seç:</label>
+            <small>Diğer sütunlardaki veriler kullanılarak, tahmin edilmesini istediğiniz özelliği seçmelisiniz.</small>
+            <hr />
             <select value={selectedFeature} onChange={handleFeatureSelect}>
               <option value="" disabled>Neyi tahmin ediyoruz?</option>
               {features.map((feature) => (
@@ -136,14 +142,36 @@ const CsvUploader = () => {
             {analyze && (
               <div className="analysis-result">
                 <h3>Algılanan Problem Türü: <span className="problem-type">{analyze}</span></h3>
+                <small>Tahminin yanlış olduğunu düşünüyorsanız, sonraki aşamada değişebilirsiniz.</small>
               </div>
             )}
 
             <button onClick={goToTraining}>Devam Et</button>
-            <br />
-            <small>Diğer sütunlardaki veriler kullanılarak, tahmin edilmesini istediğiniz özelliği seçmelisiniz.</small>
+            {!analyze &&
+             <div className="cp-gif-main">
+             <img src="https://i.pinimg.com/originals/6a/32/7c/6a327caa4b5c102de396a1c3aaa20e98.gif" alt="" />
+           </div>
+             }
+             {analyze === "Classification" &&
+             <div className="cp-gif">
+             <img src="https://i.gifer.com/E3K6.gif" alt="" />
+           </div>
+             }
+             {analyze === "Regression" &&
+             <div className="cp-gif">
+             <img src="https://gbhat.com/assets/gifs/polynomial_regression.gif" alt="" />
+           </div>
+             }
+
+            {analyze === "Time Series" &&
+             <div className="cp-gif">
+             <img src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif" alt="" />
+           </div>
+             }
           </div>
         )}
+
+       
       </div>
     </>
   );
