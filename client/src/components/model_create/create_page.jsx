@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import "../../styles/create_page.css";
 
 const CsvUploader = () => {
+  const [file, setFile] = useState([]); 
   const [data, setData] = useState([]);  
   const [info, setInfo] = useState(true); 
   const [analyze, setAnalyze] = useState(""); // Problem türü
@@ -24,7 +25,7 @@ const CsvUploader = () => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    setFile(file)
     setInfo(false);
     setFileName(file.name);
     setAnalyze(""); 
@@ -74,7 +75,7 @@ const CsvUploader = () => {
       alert("Lütfen bir özellik seçin!");
       return;
     }
-    navigate("/train", { state: { feature: selectedFeature, data: data, analyze: analyze } });
+    navigate("/train", { state: { feature: selectedFeature, data, analyze, file } });
   };
 
   return (

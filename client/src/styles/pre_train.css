@@ -1,0 +1,243 @@
+/* Genel Sayfa Stili */
+.pt-body {
+    font-family: "Arial", sans-serif;
+    background-color: rgba(18, 18, 18, 0.7);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+}
+
+/* Bölüm Stilleri */
+.pt-body-1, .pt-body-2, .pt-body-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 20px;
+}
+
+/* Başlıklar */
+.pt-body h1, .pt-body h2, .pt-body h3 {
+    color: #00bcd4;
+}
+
+.pt-body-1 h1 {
+    margin-bottom: 0;
+}
+
+.pt-body-1 small {
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+/* Dropdown (Select) Kutusu */
+.pt-body-1 select {
+    background-color: #333;
+    width: 100%;
+    max-width: 300px;
+    color: #00bcd4;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #00bcd4;
+    border-radius: 5px;
+    margin: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.pt-body-1 select option {
+    background-color: #222;
+    color: #ffffff;
+}
+
+/* Tablo Konteyneri */
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Tablo Stili */
+.pt-body table {
+    width: 90%;
+    max-width: 1200px;
+    table-layout: fixed; /* Kolon genişliklerini sabitle */
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #222;
+    color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+    text-align: center;
+}
+
+/* Tablo Başlıkları */
+.pt-body th {
+    background-color: #00bcd4;
+    color: black;
+    padding: 12px;
+    font-size: 16px;
+}
+
+/* Tablo Hücreleri */
+.pt-body td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #444;
+    white-space: nowrap; /* Satır kaymasını önler */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tablo Satırlarının Hover Efekti */
+.pt-body tr:hover {
+    background-color: #444;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Hata Mesajı */
+.pt-body h2 {
+    width: 100%;
+    color: white;
+    text-shadow: 0px 0px 5px #00bcd4;
+    font-size: 16px;
+    padding: 20px;
+    border: 1px solid lime;
+    box-shadow: 0px 0px 10px limegreen;
+}
+
+/* Vurgu Metni */
+.pt-body strong {
+    color: lime;
+    font-size: 32px;
+    margin-left: 20px;
+}
+
+/* Ayırıcı Çizgi */
+.pt-body hr {
+    border: 2px solid deeppink;
+    width: 100%;
+}
+
+.dp-button {
+    width: 20%;
+    text-decoration:none;
+    color: yellow;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid yellow;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 10px white;
+    transition: all 1s ease-in-out;
+}
+
+.dp-button:hover{
+    background-color: yellow;
+    color:black;
+    transform: scale(1.1);
+}
+
+.dp-button-2 {
+
+    width: 20%;
+    text-decoration:none;
+    color: deeppink;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid deeppink;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0px 0px 10px white;
+    transition: all 1s ease-in-out;
+}
+.dp-button-2:hover{
+    background-color: deeppink;
+    color:black;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* Gelişmiş Ayarlar */
+.advanced-settings {
+    background-color: transparent;
+    color: #ffffff;
+    padding: 20px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px dodgerblue;
+    width: 90%;
+    max-width: 600px;
+}
+
+.advanced-settings h3 {
+    margin-bottom: 20px;
+    color: deepskyblue;
+}
+
+/* Algoritma Seçici ve Hiperparametreler Formu */
+.advanced-settings select,
+.advanced-settings input[type="number"] {
+    background-color: rgba(18, 18, 18, 0.9);
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid dodgerblue;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Form Etiketi */
+.advanced-settings label {
+    font-size: 18px;
+    color: deeppink;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Mobil Uyumlu Düzen */
+@media (max-width: 768px) {
+    .pt-body {
+        padding: 10px;
+    }
+
+    .pt-body-1, .pt-body-2, .pt-body-3 {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .pt-body-1 select {
+        width: 100%;
+    }
+
+    .pt-body table {
+        width: 100%;
+        overflow-x: auto;
+    }
+    .advanced-settings {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .advanced-settings select,
+    .advanced-settings input[type="number"] {
+        width: 100%;
+    }
+
+    .dp-button-2, .dp-button {
+        width: 100%;
+    }
+}
