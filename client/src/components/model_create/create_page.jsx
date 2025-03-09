@@ -1,48 +1,57 @@
-import NavBar from '../mainPage/navbar';
-import { useNavigate } from 'react-router-dom';
+import NavBar from "../mainPage/navbar";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Papa from "papaparse";
 import "../../styles/create_page.css";
 
 const CsvUploader = () => {
-  const [file, setFile] = useState([]); 
-  const [data, setData] = useState([]);  
-  const [info, setInfo] = useState(true); 
-  const [analyze, setAnalyze] = useState(""); // Problem türü
-  const [fileName, setFileName] = useState(""); 
-  const [features, setFeatures] = useState([]); 
-  const [selectedFeature, setSelectedFeature] = useState(""); 
+  const [file, setFile] = useState(null);
+  const [data, setData] = useState([]);
+  const [info, setInfo] = useState(true);
+  const [analyze, setAnalyze] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [features, setFeatures] = useState([]);
+  const [selectedFeature, setSelectedFeature] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (data.length > 0) {
-      setFeatures(Object.keys(data[0])); 
+      setFeatures(Object.keys(data[0]));
     } else {
       setFeatures([]);
     }
   }, [data]);
 
   const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    setFile(file)
-    setInfo(false);
-    setFileName(file.name);
-    setAnalyze(""); 
+    const selectedFile = event.target.files[0];
+    if (!selectedFile) return;
 
-    Papa.parse(file, {
+    if (selectedFile.type !== "text/csv") {
+      alert("Lütfen sadece CSV dosyası seçin.");
+      return;
+    }
+
+    setFile(selectedFile);
+    setInfo(false);
+    setFileName(selectedFile.name);
+    setAnalyze("");
+
+    Papa.parse(selectedFile, {
       complete: (result) => {
         setData(result.data);
       },
       header: true,
-      skipEmptyLines: true
+      skipEmptyLines: true,
     });
   };
 
-  // 📌 Kullanıcı özellik seçtiğinde ANALİZ YAP (butona basmadan!)
   const handleFeatureSelect = async (e) => {
     const feature = e.target.value;
     setSelectedFeature(feature);
+    setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch("http://localhost:8000/api/analyze_csv/", {
@@ -53,21 +62,20 @@ const CsvUploader = () => {
           selectedFeature: feature,
         }),
       });
-    
+
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`HTTP Error ${response.status}: ${errorMessage}`);
       }
-    
+
       const result = await response.json();
-      
-      // problem_type anahtarı yoksa hata mesajı döndür
       setAnalyze(result.problem_type || `Beklenmeyen Yanıt: ${JSON.stringify(result)}`);
-    } catch (error) {
-      console.error("API Hata:", error);
-      setAnalyze("Veri analiz için uygun değil.");
+    } catch (err) {
+      console.error("API Hata:", err);
+      setError("Veri analiz için uygun değil.");
+    } finally {
+      setLoading(false);
     }
-    
   };
 
   const goToTraining = () => {
@@ -78,13 +86,16 @@ const CsvUploader = () => {
     navigate("/train", { state: { feature: selectedFeature, data, analyze, file } });
   };
 
+  if (loading) return <p>Analiz ediliyor...</p>;
+  if (error) return <p>Hata: {error}</p>;
+
   return (
     <>
       <NavBar />
       <div className="cp-body">
         <div className="cp-body-container">
           <div className="div">
-            <strong className='file-title'>{fileName}</strong>
+            <strong className="file-title">{fileName}</strong>
 
             {data.length > 0 && (
               <div className="table-container">
@@ -128,10 +139,14 @@ const CsvUploader = () => {
         {features.length > 0 && (
           <div className="feature-selector">
             <label>Çıktı Özelliğini Seç:</label>
-            <small>Diğer sütunlardaki veriler kullanılarak, tahmin edilmesini istediğiniz özelliği seçmelisiniz.</small>
+            <small>
+              Diğer sütunlardaki veriler kullanılarak, tahmin edilmesini istediğiniz özelliği seçmelisiniz.
+            </small>
             <hr />
             <select value={selectedFeature} onChange={handleFeatureSelect}>
-              <option value="" disabled>Neyi tahmin ediyoruz?</option>
+              <option value="" disabled>
+                Neyi tahmin ediyoruz?
+              </option>
               {features.map((feature) => (
                 <option key={feature} value={feature}>
                   {feature}
@@ -139,40 +154,48 @@ const CsvUploader = () => {
               ))}
             </select>
 
-            {/* 📌 Problem türü hemen ekranda gösterilecek! */}
             {analyze && (
               <div className="analysis-result">
-                <h3>Algılanan Problem Türü: <span className="problem-type">{analyze}</span></h3>
+                <h3>
+                  Algılanan Problem Türü: <span className="problem-type">{analyze}</span>
+                </h3>
                 <small>Tahminin yanlış olduğunu düşünüyorsanız, sonraki aşamada değişebilirsiniz.</small>
               </div>
             )}
 
             <button onClick={goToTraining}>Devam Et</button>
-            {!analyze &&
-             <div className="cp-gif-main">
-             <img src="https://i.pinimg.com/originals/6a/32/7c/6a327caa4b5c102de396a1c3aaa20e98.gif" alt="" />
-           </div>
-             }
-             {analyze === "Classification" &&
-             <div className="cp-gif">
-             <img src="https://i.gifer.com/E3K6.gif" alt="" />
-           </div>
-             }
-             {analyze === "Regression" &&
-             <div className="cp-gif">
-             <img src="https://gbhat.com/assets/gifs/polynomial_regression.gif" alt="" />
-           </div>
-             }
+            {!analyze && (
+              <div className="cp-gif-main">
+                <img
+                  src="https://i.pinimg.com/originals/6a/32/7c/6a327caa4b5c102de396a1c3aaa20e98.gif"
+                  alt=""
+                />
+              </div>
+            )}
+            {analyze === "Classification" && (
+              <div className="cp-gif">
+                <img src="https://i.gifer.com/E3K6.gif" alt="" />
+              </div>
+            )}
+            {analyze === "Regression" && (
+              <div className="cp-gif">
+                <img
+                  src="https://gbhat.com/assets/gifs/polynomial_regression.gif"
+                  alt=""
+                />
+              </div>
+            )}
 
-            {analyze === "Time Series" &&
-             <div className="cp-gif">
-             <img src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif" alt="" />
-           </div>
-             }
+            {analyze === "Time Series" && (
+              <div className="cp-gif">
+                <img
+                  src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif"
+                  alt=""
+                />
+              </div>
+            )}
           </div>
         )}
-
-       
       </div>
     </>
   );

@@ -8,6 +8,7 @@ import SignupScreen from './components/loginAndSignup/signup';
 import Login from './components/loginAndSignup/login';
 import ModelCreate from './components/model_create/create_page'
 import PreTrain from './components/model_create/pre_train';
+import TrainModel from './components/model_create/train_model'
 
 
 
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
         />
         <Route path='/model_create' element={<ProtectedRoute><ModelCreate></ModelCreate></ProtectedRoute>}/>
         <Route path='/train' element={<ProtectedRoute><PreTrain></PreTrain></ProtectedRoute>}/>
+        <Route path='/train_model' element={<ProtectedRoute><TrainModel></TrainModel></ProtectedRoute>}/>
 
         {/* Yanlış URL girildiğinde login sayfasına yönlendir */}
         <Route path="*" element={<Navigate to="/login" />} />
