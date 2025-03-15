@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const PreprocessCSV = ({ file, analyze }) => {
+const PreprocessCSV = ({ file, target }) => {
   const [processedData, setProcessedData] = useState(null);
   const [advanced, setAdvanced] = useState(false);
   const [algorithm, setAlgorithm] = useState("linear_regression"); // Varsayılan değer
-  const [epoch, setEpoch] = useState(100);
-  const [tolerance, setTolerance] = useState(0.001);
-  const [learningRate, setLearningRate] = useState(0.01);
+  const [epoch, setEpoch] = useState(1000);
+  const [tolerance, setTolerance] = useState(0.00001);
+  const [learningRate, setLearningRate] = useState(0.25);
   const [loading, setLoading] = useState(false); // Yükleme durumu
   const [error, setError] = useState(null); // Hata durumu
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ const PreprocessCSV = ({ file, analyze }) => {
       return;
     } else {
       navigate("/train_model", {
-        state: { processedData, algorithm, epoch, tolerance, learningRate },
+        state: { processedData, algorithm, epoch, tolerance, learningRate, target },
       });
     }
   };
