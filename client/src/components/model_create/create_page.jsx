@@ -12,8 +12,6 @@ const CsvUploader = () => {
   const [fileName, setFileName] = useState("");
   const [features, setFeatures] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,12 +44,9 @@ const CsvUploader = () => {
       skipEmptyLines: true,
     });
   };
-
   const handleFeatureSelect = async (e) => {
     const feature = e.target.value;
     setSelectedFeature(feature);
-    setLoading(true);
-    setError(null);
 
     try {
       const response = await fetch("http://localhost:8000/api/analyze_csv/", {
@@ -72,9 +67,7 @@ const CsvUploader = () => {
       setAnalyze(result.problem_type || `Beklenmeyen Yanıt: ${JSON.stringify(result)}`);
     } catch (err) {
       console.error("API Hata:", err);
-      setError("Veri analiz için uygun değil.");
     } finally {
-      setLoading(false);
     }
   };
 
@@ -85,9 +78,6 @@ const CsvUploader = () => {
     }
     navigate("/train", { state: { feature: selectedFeature, data, analyze, file } });
   };
-
-  if (loading) return <p>Analiz ediliyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
 
   return (
     <>

@@ -1,48 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const PreprocessCSV = ({ file, target }) => {
-  const [processedData, setProcessedData] = useState(null);
+const PreprocessCSV = ({ data, target }) => {
   const [advanced, setAdvanced] = useState(false);
   const [algorithm, setAlgorithm] = useState("linear_regression"); // Varsayılan değer
   const [epoch, setEpoch] = useState(1000);
+  const [split, setSplit] = useState(0.8);
   const [tolerance, setTolerance] = useState(0.00001);
   const [learningRate, setLearningRate] = useState(0.25);
-  const [loading, setLoading] = useState(false); // Yükleme durumu
-  const [error, setError] = useState(null); // Hata durumu
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!file) return;
-
-    const handlePreprocess = async () => {
-      setLoading(true);
-      setError(null);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await fetch("http://localhost:8000/api/preprocess/", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        setProcessedData(result.cleaned_data);
-      } catch (err) {
-        console.error("Preprocessing error:", err);
-        setError("Veri işlenirken bir hata oluştu.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    handlePreprocess();
-  }, [file]);
 
   const handleAlgorithmChange = (event) => {
     setAlgorithm(event.target.value);
@@ -55,6 +21,14 @@ const PreprocessCSV = ({ file, target }) => {
       return;
     }
     setEpoch(epochValue);
+  };
+  const handleSplitChange = (event) => {
+    const splitValue = Number(event.target.value);
+    if (isNaN(splitValue) || splitValue <= 0 || splitValue > 1) {
+      alert("Eğitim/Test verisi oranı 0 ile 1 arasında olmalıdır (0 hariç)!");
+      return;
+    }
+    setSplit(splitValue);
   };
 
   const handleToleranceChange = (event) => {
@@ -80,29 +54,27 @@ const PreprocessCSV = ({ file, target }) => {
   };
 
   const handleTrain = () => {
-    if (!algorithm || !processedData) {
+    if (!algorithm || !data) {
       alert("Bir sorun oluştu.");
       return;
     } else {
       navigate("/train_model", {
-        state: { processedData, algorithm, epoch, tolerance, learningRate, target },
+        state: { data, algorithm, epoch, tolerance, learningRate, target, split },
       });
     }
   };
 
-  if (loading) return <p>Veri işleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
 
   return (
     <>
-      {processedData ? (
+      {data ? (
         <>
           <table border="1">
             <thead>
               <tr>
-                {processedData.length > 0 &&
-                typeof processedData[0] === "object" ? (
-                  Object.keys(processedData[0]).map((key) => (
+                {data.length > 0 &&
+                typeof data[0] === "object" ? (
+                  Object.keys(data[0]).map((key) => (
                     <th key={key}>{key}</th>
                   ))
                 ) : (
@@ -111,9 +83,9 @@ const PreprocessCSV = ({ file, target }) => {
               </tr>
             </thead>
             <tbody>
-              {processedData.length > 0 &&
-                typeof processedData[0] === "object" &&
-                processedData.slice(0, 5).map((row, index) => (
+              {data.length > 0 &&
+                typeof data[0] === "object" &&
+                data.slice(0, 5).map((row, index) => (
                   <tr key={index}>
                     {Object.values(row).map((value, idx) => (
                       <td key={idx}>{value}</td>
@@ -166,6 +138,17 @@ const PreprocessCSV = ({ file, target }) => {
                   value={learningRate}
                   onChange={handleLearningRateChange}
                   step="0.001"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label>Eğitim/Test Verisi Oranı Sayısı(0-1, Eğitim Oranı=):</label>
+                <input
+                  type="number"
+                  value={split}
+                  onChange={handleSplitChange}
+                  step="0.001"
+                  max="1"
                   min="0"
                 />
               </div>

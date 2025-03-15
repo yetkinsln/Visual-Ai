@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'corsheaders',
     "analyzer",
-    "dataProcess",
     "model_schemas",
 
 ]

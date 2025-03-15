@@ -62,7 +62,7 @@ const Train = () => {
         <div className="pt-body-3">
           <h3>İşlenen Veri Önizlemesi</h3>
           <small>Boş veriler düzeltildi, tüm veriler numerik değere çevrildi, normalize edildi.</small>
-          <Dataprocess file={file} target={feature} />
+          <Dataprocess data={data} target={feature} />
         </div>
       </div>
     </>
