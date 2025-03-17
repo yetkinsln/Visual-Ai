@@ -131,3 +131,4 @@
 20250309	23:23:24	c237c16d-7ca1-4b36-83fa-9944bf81d29c	GET	/	undefined
 20250309	23:23:24	a44c38ee-2e18-4f98-b60b-6b47c8114742	GET	/favicon.ico	undefined
 20250309	23:23:56	1d6d322f-4141-4eb4-b5be-d4c969558602	POST	/users/login	http://localhost:5173
+20250317	20:30:24	03a2d6cb-882e-4e9f-acc3-3c8ae616a096	POST	/users/login	http://localhost:5173

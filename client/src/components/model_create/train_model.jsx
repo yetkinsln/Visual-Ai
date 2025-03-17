@@ -97,7 +97,7 @@ const TrainModel = () => {
     return null;
   }
 
-  let chartData = null; // Başlangıçta null olarak ayarla
+  let chartData = null;
   let chartData_v = null;
 
   if (res && res.history && Array.isArray(res.history)) {
@@ -110,7 +110,6 @@ const TrainModel = () => {
           fill: false,
           backgroundColor: "rgb(75, 192, 192)",
           borderColor: "rgba(75, 192, 192, 0.2)",
-    
         },
       ],
     };
@@ -135,6 +134,24 @@ const TrainModel = () => {
     },
   };
 
+  const downloadLogs = () => {
+    if (res && res.history && Array.isArray(res.history)) {
+      const csv = convertToCSV(res.history);
+      const element = document.createElement("a");
+      const file = new Blob([csv], { type: "text/csv" });
+      element.href = URL.createObjectURL(file);
+      element.download = "model_egitim_loglari.csv";
+      document.body.appendChild(element);
+      element.click();
+    }
+  };
+  
+  const convertToCSV = (data) => {
+    const header = Object.keys(data[0]).join(",");
+    const rows = data.map((item) => Object.values(item).join(","));
+    return `${header}\n${rows.join("\n")}`;
+  };
+
   if (res && res.history && Array.isArray(res.history)) {
     chartData_v = {
       labels: res.history.map((item) => item.iteration),
@@ -145,11 +162,10 @@ const TrainModel = () => {
           fill: false,
           backgroundColor: "rgb(87, 75, 192)",
           borderColor: "rgba(75, 192, 192, 0.2)",
-    
         },
       ],
     };
-  };
+  }
 
   const chartOptions_v = {
     responsive: true,
@@ -170,6 +186,14 @@ const TrainModel = () => {
     },
   };
 
+  const testScore = res?.test_score || 0;
+  const barWidth = testScore === 0 ? "10px" : `${testScore * 100}%`;
+  const red = Math.round(255 * (1 - testScore));
+  const green = Math.round(255 * testScore);
+  const barColor = `rgb(${red}, ${green}, 0)`;
+  const textColor = testScore === 0 ? "black" : "white";
+  
+
 
   return (
     <>
@@ -179,21 +203,33 @@ const TrainModel = () => {
         <hr />
 
         <div className="tm-container">
-        {chartData && (
-          <div className="chart-container-2">
-            <Line data={chartData} options={chartOptions} />
-          </div>
-        )}
-        {chartData_v && (
-          <div className="chart-container">
-            <Line data={chartData_v} options={chartOptions_v} />
-          </div>
-        )}
+          {chartData && (
+            <div className="chart-container-2">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          )}
+          {chartData_v && (
+            <div className="chart-container">
+              <Line data={chartData_v} options={chartOptions_v} />
+            </div>
+          )}
         </div>
-        
-        <div>
-        
 
+        <div>
+        <h3 className="test_title">Test Doğruluk Skoru</h3>
+          <div className="test-score-bar-container">
+            
+          <div
+  className="test-score-bar"
+  style={{ width: barWidth, backgroundColor: barColor, color: textColor }}
+>
+  {testScore.toFixed(4)}
+</div>
+
+          </div>
+          <div className="log_download_button_container">
+          <button className="log_download_button" onClick={downloadLogs}>Log Dosyalarını İndir</button>
+          </div>
           <h3>Model Bilgileri</h3>
           <pre>{JSON.stringify(res, null, 2)}</pre>
         </div>
