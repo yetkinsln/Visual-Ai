@@ -69,40 +69,7 @@ const PreprocessCSV = ({ data, target }) => {
     <>
       {data ? (
         <>
-          <table border="1">
-            <thead>
-              <tr>
-                {data.length > 0 &&
-                typeof data[0] === "object" ? (
-                  Object.keys(data[0]).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))
-                ) : (
-                  <th>Veri Yok</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {data.length > 0 &&
-                typeof data[0] === "object" &&
-                data.slice(0, 5).map((row, index) => (
-                  <tr key={index}>
-                    {Object.values(row).map((value, idx) => (
-                      <td key={idx}>{value}</td>
-                    ))}
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-
-          <a className="dp-button-2" onClick={advancedButton}>
-            Gelişmiş Ayarlar
-          </a>
-
-          {advanced && (
-            <div className="advanced-settings">
-              <h3>Gelişmiş Ayarlar</h3>
-              <div>
+        <div className="advanced-settings">
                 <label>Algoritma Seçin:</label>
                 <select value={algorithm} onChange={handleAlgorithmChange}>
                   <option value="linear_regression">Lineer Regresyon</option>
@@ -112,6 +79,15 @@ const PreprocessCSV = ({ data, target }) => {
                   <option value="decision_tree">Karar Ağaçları</option>
                 </select>
               </div>
+          
+          <a className="dp-button-2" onClick={advancedButton}>
+            Gelişmiş Ayarlar
+          </a>
+
+          {advanced && (
+            <div className="advanced-settings">
+              <h3>Gelişmiş Ayarlar</h3>
+              
               <div>
                 <label>Epoch Sayısı:</label>
                 <input

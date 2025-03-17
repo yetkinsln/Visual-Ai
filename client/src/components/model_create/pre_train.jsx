@@ -60,8 +60,6 @@ const Train = () => {
           </table>
         </div>
         <div className="pt-body-3">
-          <h3>İşlenen Veri Önizlemesi</h3>
-          <small>Boş veriler düzeltildi, tüm veriler numerik değere çevrildi, normalize edildi.</small>
           <Dataprocess data={data} target={feature} />
         </div>
       </div>

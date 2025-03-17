@@ -1,69 +1,100 @@
 /* TrainModel.css */
 
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #e74c3c;
+  --background-color: #f4f4f4;
+  --text-color: #333;
+  --light-text-color: #555;
+  --error-text-color: #e74c3c;
+}
+
 .train-model-container {
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tm-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 500px;
+}
+
+.train-model-container h2 {
+  color: aquamarine;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.train-model-container h3 {
+  color: var(--light-text-color);
+  margin-top: 30px;
+}
+
+.train-model-container pre {
+  background-color: var(--background-color);
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.train-model-container hr{
+  width: 100%;
+  border-color: white;
+}
+
+.chart-container,
+.chart-container-2 {
+  width: 100%;
+  margin: 20px; /* Boşluk */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid var(--primary-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .train-model-container h2 {
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .train-model-container h3 {
-    color: #555;
-    margin-top: 30px;
-  }
-  
-  .train-model-container pre {
-    background-color: #f4f4f4;
-    padding: 15px;
-    border-radius: 5px;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  
-  .chart-container {
-    width: 80%;
-    margin: 20px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .loader-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .loader-content {
-    text-align: center;
-  }
-  
-  .loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    margin: 20px auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .error-message {
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 20px;
-  }
+}
+
+.error-message {
+  color: var(--error-text-color);
+  text-align: center;
+  margin-top: 20px;
+}
+
+.loader-content p {
+  color: cyan;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  text-shadow: 0px 0px 10px white;
+}

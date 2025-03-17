@@ -20,6 +20,7 @@ class Model():
                 self.split = params['split']
                 self.data = pd.read_json(StringIO(json.dumps(params['data'])))
 
+                
                 # Removed return JsonResponse from here, as it belongs in the view.
             except Exception as e:
                 self.error = str(e)  # Store the error for the view to handle
@@ -41,7 +42,10 @@ def build_model(request):
     match model.algorithm:
         case 'linear_regression':
             linear_model = Linear_regression({'df':model.data, 'target':model.target})
-            result = linear_model.fit(learning_rate=model.learningRate, epoch=model.epoch, tolerance=model.tolerance, split_count=model.split)
+            train_ratio = model.split
+            test_ratio = (1 - train_ratio)/2
+            validation_ratio = test_ratio
+            result = linear_model.fit(learning_rate=model.learningRate, epoch=model.epoch, tolerance=model.tolerance, train_ratio=train_ratio, validation_ratio=validation_ratio, test_ratio=test_ratio)
 
             return JsonResponse(result, safe=False)
 

@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import "../../styles/train_results.css"; // CSS dosyasını içe aktar
+import "../../styles/train_results.css";
 
 ChartJS.register(
   CategoryScale,
@@ -86,47 +86,119 @@ const TrainModel = () => {
   }
 
   if (error) {
-    return <p className="error-message">Hata: {error}</p>;
+    return (
+      <div className="error-container">
+        <p className="error-message">Hata: {error}</p>
+      </div>
+    );
   }
 
   if (!res) {
     return null;
   }
 
-  const chartData = {
-    labels: res.history.map((item) => item.iteration),
-    datasets: [
-      {
-        label: "Kayıp (Loss)",
-        data: res.history.map((item) => item.loss),
-        fill: false,
-        backgroundColor: "rgb(75, 192, 192)",
-        borderColor: "rgba(75, 192, 192, 0.2)",
-      },
-    ],
-  };
+  let chartData = null; // Başlangıçta null olarak ayarla
+  let chartData_v = null;
+
+  if (res && res.history && Array.isArray(res.history)) {
+    chartData = {
+      labels: res.history.map((item) => item.iteration),
+      datasets: [
+        {
+          label: "Kayıp (Loss)",
+          data: res.history.map((item) => item.loss),
+          fill: false,
+          backgroundColor: "rgb(75, 192, 192)",
+          borderColor: "rgba(75, 192, 192, 0.2)",
+    
+        },
+      ],
+    };
+  }
 
   const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
       },
     },
+    plugins: {
+      title: {
+        display: true,
+        text: "Eğitim Kayıp Grafiği",
+        font: {
+          size: 16,
+        },
+      },
+    },
   };
+
+  if (res && res.history && Array.isArray(res.history)) {
+    chartData_v = {
+      labels: res.history.map((item) => item.iteration),
+      datasets: [
+        {
+          label: "Validation Loss",
+          data: res.history.map((item) => item.validation_loss),
+          fill: false,
+          backgroundColor: "rgb(87, 75, 192)",
+          borderColor: "rgba(75, 192, 192, 0.2)",
+    
+        },
+      ],
+    };
+  };
+
+  const chartOptions_v = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: "Validasyon Kayıp Grafiği",
+        font: {
+          size: 16,
+        },
+      },
+    },
+  };
+
 
   return (
     <>
-    <NavBar></NavBar>
-    <div className="train-model-container">
-      <h2>Model Eğitim Sonuçları</h2>
-      <div className="chart-container">
-        <Line data={chartData} options={chartOptions} />
+      <NavBar />
+      <div className="train-model-container">
+        <h2>Model Eğitim Sonuçları</h2>
+        <hr />
+
+        <div className="tm-container">
+        {chartData && (
+          <div className="chart-container-2">
+            <Line data={chartData} options={chartOptions} />
+          </div>
+        )}
+        {chartData_v && (
+          <div className="chart-container">
+            <Line data={chartData_v} options={chartOptions_v} />
+          </div>
+        )}
+        </div>
+        
+        <div>
+        
+
+          <h3>Model Bilgileri</h3>
+          <pre>{JSON.stringify(res, null, 2)}</pre>
+        </div>
       </div>
-      <div>
-        <h3>Model Bilgileri</h3>
-        <pre>{JSON.stringify(res, null, 2)}</pre>
-      </div>
-    </div></>
+    </>
   );
 };
 
