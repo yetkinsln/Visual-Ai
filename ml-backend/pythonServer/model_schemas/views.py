@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import pandas as pd
 from .schemas.linear_regression import Linear_regression
+from .schemas.logistic_regression import Logistic_Regression
 from io import StringIO  
 
 class Model():
@@ -46,6 +47,16 @@ def build_model(request):
             test_ratio = (1 - train_ratio)/2
             validation_ratio = test_ratio
             result = linear_model.fit(learning_rate=model.learningRate, epoch=model.epoch, tolerance=model.tolerance, train_ratio=train_ratio, validation_ratio=validation_ratio, test_ratio=test_ratio)
+
+            return JsonResponse(result, safe=False)
+        
+        case 'logistic_regression':
+
+            logistic_model = Logistic_Regression({'df':model.data, 'target':model.target})
+            train_ratio = model.split
+            test_ratio = (1 - train_ratio)/2
+            validation_ratio = test_ratio
+            result = logistic_model.fit(num_iterations=model.epoch, learning_rate=model.learningRate)
 
             return JsonResponse(result, safe=False)
 

@@ -59,7 +59,6 @@ class Linear_regression():
         X_test = X[train_size + validation_size:]
         y_test = y[train_size + validation_size:]
 
-        print( X_train.isna().sum(), y_train)
 
         return X_train, y_train, X_validation, y_validation, X_test, y_test
 
