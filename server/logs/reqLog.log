@@ -132,3 +132,8 @@
 20250309	23:23:24	a44c38ee-2e18-4f98-b60b-6b47c8114742	GET	/favicon.ico	undefined
 20250309	23:23:56	1d6d322f-4141-4eb4-b5be-d4c969558602	POST	/users/login	http://localhost:5173
 20250317	20:30:24	03a2d6cb-882e-4e9f-acc3-3c8ae616a096	POST	/users/login	http://localhost:5173
+20250329	18:52:14	c653d974-eec7-4367-a66d-09e4d9f1b3dc	POST	/users/login	http://localhost:5173
+20250329	19:01:33	e5595d8e-56da-4860-aba9-bff75ed26633	POST	/users/login	http://localhost:5173
+20250329	19:01:54	5e5b9b72-1d20-4505-926d-043977d4c189	POST	/users/signup	http://localhost:5173
+20250329	19:01:59	ddea6f2c-902f-4168-8903-995777236ced	POST	/users/login	http://localhost:5173
+20250330	12:25:09	926654de-b73d-4886-9be0-9778be7be9bb	GET	/Account/v.1.0/PrivacySettings?clientId=135333107684344109	undefined

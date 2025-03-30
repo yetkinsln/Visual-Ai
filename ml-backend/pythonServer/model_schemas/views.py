@@ -1,32 +1,46 @@
 import json
+import numpy as np
+import pandas as pd
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import pandas as pd
 from .schemas.linear_regression import Linear_regression
-from .schemas.logistic_regression import Logistic_Regression
-from io import StringIO  
+from .schemas.logistic_regression import Classification
+from io import StringIO
 
-class Model():
+# NumPy dizilerini JSON uyumlu hale getiren yardımcı fonksiyon
+def convert_to_serializable(obj):
+    """Tüm NumPy dizilerini JSON uyumlu hale getirir."""
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: convert_to_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(value) for value in obj]
+    elif isinstance(obj, np.generic):  # NumPy'nin diğer özel veri türleri için
+        return obj.item()
+    return obj
 
+class Model:
     def __init__(self, request):
-        if request.method == 'POST':
-            try:
-                params = json.loads(request.body)
-                self.params = params  # Corrected: removed redundant json.loads
-                self.algorithm = params['algorithm']
-                self.target = params['target']
-                self.epoch = params['epoch']
-                self.tolerance = params['tolerance']
-                self.learningRate = params['learningRate']
-                self.split = params['split']
-                self.data = pd.read_json(StringIO(json.dumps(params['data'])))
-
-                
-                # Removed return JsonResponse from here, as it belongs in the view.
-            except Exception as e:
-                self.error = str(e)  # Store the error for the view to handle
-        else:
+        if request.method != 'POST':
             self.error = "Invalid request method. Only POST is allowed."
+            return
+
+        try:
+            params = json.loads(request.body)
+            self.algorithm = params.get('algorithm')
+            self.target = params.get('target')
+            self.epoch = params.get('epoch')
+            self.tolerance = params.get('tolerance')
+            self.learningRate = params.get('learningRate')
+            self.split = params.get('split')
+            self.data = pd.read_json(StringIO(json.dumps(params.get('data', {}))))
+
+            if not all([self.algorithm, self.target, self.epoch, self.tolerance, self.learningRate, self.split]):
+                self.error = "Missing required parameters."
+        
+        except Exception as e:
+            self.error = str(e)
 
     def to_dict(self):
         return {
@@ -40,52 +54,31 @@ class Model():
 def build_model(request):
     model = Model(request)
 
-    match model.algorithm:
-        case 'linear_regression':
-            linear_model = Linear_regression({'df':model.data, 'target':model.target})
-            train_ratio = model.split
-            test_ratio = (1 - train_ratio)/2
-            validation_ratio = test_ratio
-            result = linear_model.fit(learning_rate=model.learningRate, epoch=model.epoch, tolerance=model.tolerance, train_ratio=train_ratio, validation_ratio=validation_ratio, test_ratio=test_ratio)
-
-            return JsonResponse(result, safe=False)
-        
-        case 'logistic_regression':
-
-            logistic_model = Logistic_Regression({'df':model.data, 'target':model.target})
-            train_ratio = model.split
-            test_ratio = (1 - train_ratio)/2
-            validation_ratio = test_ratio
-            result = logistic_model.fit(num_iterations=model.epoch, learning_rate=model.learningRate)
-
-            return JsonResponse(result, safe=False)
-
     if hasattr(model, 'error'):
-        return JsonResponse({"error": model.error}, status=500)
+        return JsonResponse({"error": model.error}, status=400)
+
+    if model.algorithm == 'linear_regression':
+        linear_model = Linear_regression({'df': model.data, 'target': model.target})
+        train_ratio = model.split
+        test_ratio = (1 - train_ratio) / 2
+        validation_ratio = test_ratio
+        result = linear_model.fit(
+            learning_rate=model.learningRate, 
+            epoch=model.epoch, 
+            tolerance=model.tolerance, 
+            train_ratio=train_ratio, 
+            validation_ratio=validation_ratio, 
+            test_ratio=test_ratio
+        )
+
+    elif model.algorithm == 'logistic_regression':
+        ml_model = Classification()
+        result = ml_model.fit(df=model.data, target=model.target, layer_sizes=[128, 64, 32])
+
     else:
-        return JsonResponse(model.to_dict())
-        # if request.method == 'POST':
-        #     try:
-        #         params = json.loads(request.body)
-        #         algorithm = params['algorithm']
-        #         epoch = params['epoch']
-        #         tolerance = params['tolerance']
-        #         learningRate = params['learningRate']
-        #         df = pd.read_json(StringIO(json.dumps(params['data'])))
-        #         target = params['target']
-        #         X = df.drop(target, axis=1)
-        #         y = df[target]
-        #         model = schemas.linear_regression(X, y,learningRate,epoch,tolerance)
-        #         result = {"message": "Model oluşturuldu", "predictions": model} #Direkt modeli döndürdüm.
-        #         return JsonResponse(result)
-        #     except json.JSONDecodeError:
-        #         return JsonResponse({"error": "Geçersiz JSON"}, status=400)
-        #     except KeyError as e:
-        #         if str(e) == f"'{params['target']}'":
-        #             return JsonResponse({"error": f"'{target}' sütunu bulunamadı"}, status=400)
-        #         else:
-        #             return JsonResponse({"error": f"Anahtar hatası: {e}"}, status=400)
-        #     except Exception as e:
-        #         return JsonResponse({"error": str(e)}, status=500)
-        # else:
-        #     return JsonResponse({"error": "Sadece POST istekleri kabul edilir"}, status=405)
+        return JsonResponse({"error": "Unsupported algorithm specified."}, status=400)
+
+    # Tüm sonuçları JSON formatına uygun hale getir
+    serializable_result = convert_to_serializable(result)
+
+    return JsonResponse(serializable_result, safe=False)

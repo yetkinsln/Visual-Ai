@@ -14,6 +14,8 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  text-align: center;
+  color: white;
 }
 
 .tm-container {
@@ -138,5 +140,42 @@
 .log_download_button:hover {
   background-color: #0056b3;
 }
+/* Container for the graphs */
+/* Container for the graphs */
+.plots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); /* Increased minimum width */
+  gap: 30px; /* Increased space between images */
+  padding: 20px;
+  justify-items: center;
+}
+
+/* Style for each individual image */
+.plots img {
+  width: 100%;
+  height: auto; /* Set fixed height */
+  border-radius: 8px;
+  border: 5px solid deeppink;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  object-fit:contain; /* Preserve aspect ratio while filling the container */
+}
+
+/* Hover effect for each image */
+.plots img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: Title or description under each graph */
+.plots img + p {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+
 
 /* Diğer stilleriniz... */

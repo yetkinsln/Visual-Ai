@@ -72,7 +72,7 @@ const TrainModel = () => {
     if (data) {
       trainModel();
     }
-  }, [data, algorithm, epoch, tolerance, learningRate]);
+  }, [data, algorithm, epoch, tolerance, learningRate,target,split]);
 
   if (loading) {
     return (
@@ -200,20 +200,30 @@ const TrainModel = () => {
       <NavBar />
       <div className="train-model-container">
         <h2>Model Eğitim Sonuçları</h2>
+       <small> <strong style={{"color": "red"}}>Önemli: </strong>Grafikler, çok boyutludan 2 boyutluya çevrilmiştir. Renk sapması bu yüzden normal kabul edilmelidir.</small>
         <hr />
-
+{chartData && (
         <div className="tm-container">
-          {chartData && (
+          
             <div className="chart-container-2">
               <Line data={chartData} options={chartOptions} />
             </div>
-          )}
+         
           {chartData_v && (
             <div className="chart-container">
               <Line data={chartData_v} options={chartOptions_v} />
             </div>
           )}
         </div>
+ )}
+
+{res.graphs && (
+  <div className="plots">
+    {Object.values(res.graphs).map((graph, index) => (
+      <img key={index} src={`data:image/png;base64,${graph}`} alt={`Graph ${index + 1}`} />
+    ))}
+  </div>
+)}
 
         <div>
         <h3 className="test_title">Test Doğruluk Skoru</h3>
