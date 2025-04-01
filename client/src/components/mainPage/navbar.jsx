@@ -21,7 +21,7 @@ const handleLogout = () => {
 
   return (
     <nav className="navbar">
-      <div className="logo">Visual AI</div>
+      <div className="logo"><img className="brand-ico" src="https://www.svgrepo.com/show/423832/star-origami-paper.svg" alt="" />| Visual AI</div>
       <ul className={menuOpen ? "nav-links open" : "nav-links"}>
         <li><a href="/">Home</a></li>
         <li><a href="/services">Discover</a></li>

@@ -1,6 +1,6 @@
 import NavBar from "../mainPage/navbar";
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import "../../styles/create_page.css";
 
@@ -67,8 +67,7 @@ const CsvUploader = () => {
       setAnalyze(result.problem_type || `Beklenmeyen Yanıt: ${JSON.stringify(result)}`);
     } catch (err) {
       console.error("API Hata:", err);
-    } finally {
-    }
+    } 
   };
 
   const goToTraining = () => {
@@ -85,7 +84,7 @@ const CsvUploader = () => {
       <div className="cp-body">
         <div className="cp-body-container">
           <div className="div">
-            <strong className="file-title">{fileName}</strong>
+          {fileName &&  <><small>Seçilen Dosya:</small> <strong className="file-title">{fileName}</strong></>}
 
             {data.length > 0 && (
               <div className="table-container">
@@ -159,30 +158,45 @@ const CsvUploader = () => {
                 <img
                   src="https://i.pinimg.com/originals/6a/32/7c/6a327caa4b5c102de396a1c3aaa20e98.gif"
                   alt=""
+                  
                 />
               </div>
             )}
             {analyze === "Classification" && (
-              <div className="cp-gif">
-                <img src="https://i.gifer.com/E3K6.gif" alt="" />
+             
+              <div className="cp-card">
+                
+                 <div className="cp-gif">
+                <img src="https://i.gifer.com/E3K6.gif" alt="" className="cp-image"/>
+                <strong>About Classification</strong><br />
+                <small>Data belongs to a certain category. Output is a category.</small>
+              </div>
               </div>
             )}
             {analyze === "Regression" && (
-              <div className="cp-gif">
-                <img
-                  src="https://gbhat.com/assets/gifs/polynomial_regression.gif"
-                  alt=""
-                />
-              </div>
+
+<div className="cp-card">
+                
+<div className="cp-gif">
+<img src="https://gbhat.com/assets/gifs/polynomial_regression.gif" alt="" className="cp-image"/>
+<strong>About Regression</strong><br />
+<small>Data are numbers calculated based on inputs.</small>
+</div>
+</div>
+
             )}
 
             {analyze === "Time Series" && (
-              <div className="cp-gif">
-                <img
-                  src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif"
-                  alt=""
-                />
-              </div>
+
+<div className="cp-card">
+                
+<div className="cp-gif">
+<img src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif" alt="" className="cp-image"/>
+<strong>About Time Series</strong><br />
+<small>Data is associated with rows as well as columns.</small>
+</div>
+</div>
+
             )}
           </div>
         )}

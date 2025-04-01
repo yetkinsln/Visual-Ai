@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .schemas.linear_regression import Linear_regression
+from .schemas.linear_regression import fit
 from .schemas.logistic_regression import Classification
 from io import StringIO
 
@@ -58,18 +58,10 @@ def build_model(request):
         return JsonResponse({"error": model.error}, status=400)
 
     if model.algorithm == 'linear_regression':
-        linear_model = Linear_regression({'df': model.data, 'target': model.target})
         train_ratio = model.split
         test_ratio = (1 - train_ratio) / 2
         validation_ratio = test_ratio
-        result = linear_model.fit(
-            learning_rate=model.learningRate, 
-            epoch=model.epoch, 
-            tolerance=model.tolerance, 
-            train_ratio=train_ratio, 
-            validation_ratio=validation_ratio, 
-            test_ratio=test_ratio
-        )
+        result = fit(model.data, model.target)
 
     elif model.algorithm == 'logistic_regression':
         ml_model = Classification()

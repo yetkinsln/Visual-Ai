@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-evenly;
     align-items: top;
-    height: 100vh;
+    height: 100%;
     flex-direction: row;
     margin: 0;
     
@@ -14,10 +14,10 @@
   
   /* Ana Konteyner */
   .cp-body-container {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 30px;
+    
+    margin-top: 5px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
     text-align: center;
     width: 90%;
     max-width: 800px;
@@ -25,6 +25,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
   }
   
 
@@ -98,12 +99,17 @@
   
   .file-title{
     color: goldenrod;
+    padding: 5px;
+    border-bottom: 2px solid goldenrod;
+    background-color: rgba(0,0,0,0.3);
   }
 
   /* Özellik Seçimi (Combobox) */
 .feature-selector {
+  padding-left: 50px;
   margin-top: 20px;
   text-align: center;
+  border-left: 2px solid white;
 }
 
 .feature-selector label {
@@ -167,24 +173,38 @@
   
 }
 
-.cp-gif img{
-    width: 100%;
-    max-height: 300px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    object-fit:contain;
-    transition: transform 0.3s ease;
-    background: transparent;
+
+.cp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 30px;
+  margin: 0 5%;
+  background-color: rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  backdrop-filter: blur(5px);
+  color: #ffffff;
 }
 
+.cp-image {
+  width: 100%;
+  max-height: 150px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  object-fit:contain;
+  background-color: transparent;
+}
 
 .cp-gif-main img{
-    width: 100%;
-    max-height: 400px;
-    opacity: 0.6;
-    border-radius: 12px;
-    object-fit:cover;
-    transition: transform 0.3s ease;
-    background-color: transparent;
-    mix-blend-mode:darken;
+  width: 100%;
+  max-height: 400px;
+  opacity: 0.6;
+  border-radius: 12px;
+  object-fit:cover;
+  transition: transform 0.3s ease;
+  background-color: transparent;
+  mix-blend-mode:darken;
 }

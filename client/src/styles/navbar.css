@@ -3,7 +3,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(20, 20, 20, 0.9);
+    background: rgba(0, 0, 0, 0.3);
     padding: 12px 20px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
     position: sticky;
@@ -17,15 +17,20 @@
 .logo {
     font-size: 28px;
     font-weight: bold;
-    color: #ffffff;
+    color: azure;
     margin-left: 10px;
     letter-spacing: 1px;
     transition: color 0.3s ease, text-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+.brand-ico{
+    max-width: 50px;
 }
 
 .logo:hover {
-    color: #0abdc6;
-    text-shadow: 0px 0px 10px #0abdc6;
+    color: deeppink;
+    text-shadow: 0px 0px 10px dodgerblue;
 }
 
 /* Menü Stili */
@@ -36,30 +41,29 @@
 }
 
 .nav-links li {
-    padding: 10px;
+    padding: 15px;
     border-radius: 10px;
     transition: all 0.3s ease-in-out;
+
 }
 
 .nav-links a {
+    
     text-decoration: none;
     color: #ffffff;
     font-size: 16px;
     font-weight: 500;
-    transition: color 0.3s ease-in-out, text-shadow 0.3s ease;
+    transition: all 1s ease-in-out;
     padding: 10px;
 }
 
 .nav-links li:hover {
-    background: rgba(10, 189, 198, 0.2);
+    background-color: rgba(30, 144, 255, 0.9);
     transform: translateY(-3px);
-    box-shadow: 0px 2px 12px rgba(10, 189, 198, 0.3);
+
 }
 
-.nav-links a:hover {
-    color: #0abdc6;
-    text-shadow: 0px 0px 10px #0abdc6;
-}
+
 
 /* Hamburger Menü (Mobil İçin) */
 .menu-icon {

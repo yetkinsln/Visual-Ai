@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "../mainPage/navbar";
 import { useLocation } from "react-router-dom";
 import { Line } from "react-chartjs-2";
