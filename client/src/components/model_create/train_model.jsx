@@ -76,12 +76,13 @@ const TrainModel = () => {
 
   if (loading) {
     return (
+      <>
       <div className="loader-container">
-        <div className="loader-content">
-          <div className="loader"></div>
-          <p>Model eğitiliyor... Lütfen bekleyin.</p>
-        </div>
+        <div className="loader-ring"></div>
+        <p className="loader-p">Model eğitiliyor... Lütfen bekleyin.</p>
+
       </div>
+    </>
     );
   }
 
@@ -200,7 +201,7 @@ const TrainModel = () => {
       <NavBar />
       <div className="train-model-container">
         <h2>Model Eğitim Sonuçları</h2>
-       <small> <strong style={{"color": "red"}}>Önemli: </strong>Grafikler, çok boyutludan 2 boyutluya çevrilmiştir. Renk sapması bu yüzden normal kabul edilmelidir.</small>
+       <small> <strong style={{"color": "red"}}>Önemli: </strong>Sınıflandırma modellerinde grafikler, çok boyutludan 2 boyutluya çevrilmiştir. Renk sapması bu yüzden normal kabul edilmelidir.</small>
         <hr />
 {chartData && (
         <div className="tm-container">
