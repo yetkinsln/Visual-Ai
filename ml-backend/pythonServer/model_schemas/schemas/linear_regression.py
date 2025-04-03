@@ -84,10 +84,11 @@ def mse_prime(y_true, y_pred):
 
 def loss_graph(err,title):
         plt.figure(figsize=(6, 4))
-        plt.plot(err, label='Loss', color='blue')
+        plt.plot(err, label='Loss', color='red')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.title(title)
+        plt.axvline(x=err.index(np.min(err)), linestyle = "--", color="green")
         plt.legend()
         
         buf = BytesIO()

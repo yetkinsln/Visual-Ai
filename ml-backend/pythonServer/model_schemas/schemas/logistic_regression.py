@@ -56,7 +56,7 @@ class Classification():
         y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
         return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))
 
-    def train_mlp_adam(self, X, y, X_val, y_val, hidden_sizes=[128, 64, 32], lr=0.001, epochs=1000, beta1=0.9, beta2=0.999, epsilon=1e-8):
+    def train_mlp_adam(self, X, y, X_val, y_val, hidden_sizes=[128, 64, 32], lr=0.001, epochs=4000, beta1=0.9, beta2=0.999, epsilon=1e-8):
         loss_history, val_loss_history = [], []
         input_size = X.shape[1]
         unique_classes = np.unique(y)
@@ -125,7 +125,7 @@ class Classification():
             if epoch % 500 == 0:
                 print(f"Epoch {epoch}, Loss: {loss:.4f}")
 
-        return best_weights, best_biases, loss_history, val_loss_history
+        return best_weights, best_biases, loss_history, val_loss_history, class_mapping
 
     def predict(self, X, y, weights, biases):
         activations = [X]
@@ -148,25 +148,38 @@ class Classification():
 
 
     def visualize_results(self, X, y, weights, biases, title):
-        pca = PCA(n_components=2)
-        X_pca = pca.fit_transform(X)
+        """
+        Çok boyutlu verileri görselleştirir ve karar sınırlarını gösterir.
 
-        x_min, x_max = X_pca[:, 0].min() - 1, X_pca[:, 0].max() + 1
-        y_min, y_max = X_pca[:, 1].min() - 1, X_pca[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1), np.arange(y_min, y_max, 0.1))
-        grid = np.c_[xx.ravel(), yy.ravel()]
+        Parametreler:
+        - X: Giriş verileri (numpy array).
+        - y: Hedef etiketler (numpy array).
+        - weights: Modelin ağırlıkları.
+        - biases: Modelin bias'ları.
+        - title: Grafiğin başlığı.
 
+        Dönüş:
+        - Görselleştirmenin base64 kodlanmış PNG görüntüsü, hata durumunda None.
+        """
         try:
-            # Ensure that predictions are in the correct shape and not empty
-            Z = self.predict(pca.inverse_transform(grid), y, weights, biases)
-            Z = Z.reshape(xx.shape)  # Ensure Z has the correct shape for contourf
+            pca = PCA(n_components=2)
+            X_pca = pca.fit_transform(X)
 
-            # Now we can safely plot the contour
+            x_min, x_max = X_pca[:, 0].min() - 1, X_pca[:, 0].max() + 1
+            y_min, y_max = X_pca[:, 1].min() - 1, X_pca[:, 1].max() + 1
+            xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1), np.arange(y_min, y_max, 0.1))
+            grid = np.c_[xx.ravel(), yy.ravel()]
+
+            # PCA'dan ters dönüşüm yapmadan doğrudan 2D grid üzerinde tahmin yap
+            Z = self.predict(pca.inverse_transform(grid), y, weights, biases)
+            Z = Z.reshape(xx.shape)
+
             plt.figure(figsize=(10, 6))
             plt.contourf(xx, yy, Z, alpha=0.3, cmap='rainbow')
-            
+
+            # Veri noktalarını PCA'dan dönüştürülmüş 2D uzayda göster
             plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='rainbow', edgecolors='k')
-           
+
             plt.title(title)
             plt.xlabel('PCA Dimension 1')
             plt.ylabel('PCA Dimension 2')
@@ -181,9 +194,8 @@ class Classification():
             return image_base64
 
         except Exception as e:
-            print(f"Error during visualization: {e}")
+            print(f"Görselleştirme sırasında hata: {e}")
             return None
-
 
 
     def loss_graph(self, loss_history, title):
@@ -209,7 +221,12 @@ class Classification():
         return df
 
     def accuracy(self, y_true, y_pred):
+
         return np.mean(y_true == y_pred)
+
+    def map_predictions(self,predictions, class_mapping):
+        reversed_mapping = {v: k for k, v in class_mapping.items()}
+        return np.array([reversed_mapping[pred] for pred in predictions])
 
 
     def fit(self, df, target, layer_sizes):
@@ -227,9 +244,9 @@ class Classification():
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
             X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-            weights, biases, loss_history,val_loss_history = self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=layer_sizes)
+            weights, biases, loss_history,val_loss_history,class_mapping = self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=layer_sizes)
             predictions = self.predict(X_test,y, weights, biases)
-            test_score = self.accuracy(y_test, predictions)
+            test_score = self.accuracy(y_test, self.map_predictions(predictions,class_mapping))
             graphs = {
                 'train_graph': self.visualize_results(X_train, y_train,weights,biases, 'Eğitim Seti Karar Çizgisi'),
                 'test_graph': self.visualize_results(X_test, y_test,weights,biases, 'Test Seti Karar Çizgisi'),

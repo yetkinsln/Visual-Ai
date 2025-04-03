@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .schemas.linear_regression import fit
+from .schemas.linear_regression import fit as regression_fit
 from .schemas.logistic_regression import Classification
 from io import StringIO
 
@@ -61,11 +61,11 @@ def build_model(request):
         train_ratio = model.split
         test_ratio = (1 - train_ratio) / 2
         validation_ratio = test_ratio
-        result = fit(model.data, model.target)
+        result = regression_fit(model.data, model.target)
 
     elif model.algorithm == 'logistic_regression':
         ml_model = Classification()
-        result = ml_model.fit(df=model.data, target=model.target, layer_sizes=[128, 64, 32])
+        result = ml_model.fit(df=model.data, target=model.target, layer_sizes=[64, 32])
 
     else:
         return JsonResponse({"error": "Unsupported algorithm specified."}, status=400)
