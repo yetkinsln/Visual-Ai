@@ -1,18 +1,24 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header("Authorization");
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(403).json({ message: "Access Denied: No Token Provided" });
+    }
+
+    const token = authHeader.split(" ")[1]; // "Bearer <token>" içinden sadece token’ı al
 
     if (!token) {
-        return res.status(401).json({ message: "Access Denied: No Token Provided" });
+        return res.status(403).json({ message: "Access Denied: Token Format Incorrect" });
     }
 
     try {
-        const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
-        req.user = decoded; // Kullanıcı bilgilerini request'e ekle
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = verified; // 👈 `req.user.userId` olarak erişilebilir
         next();
-    } catch (error) {
-        res.status(400).json({ message: "Invalid Token" });
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid Token" });
     }
 };
 

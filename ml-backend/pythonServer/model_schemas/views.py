@@ -3,9 +3,10 @@ import numpy as np
 import pandas as pd
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .schemas.linear_regression import fit as regression_fit
-from .schemas.logistic_regression import Classification
+from .schemas.Regression import fit as regression_fit
+from .schemas.Classification import Classification
 from io import StringIO
+
 
 # NumPy dizilerini JSON uyumlu hale getiren yardımcı fonksiyon
 def convert_to_serializable(obj):
@@ -31,14 +32,13 @@ class Model:
             self.algorithm = params.get('algorithm')
             self.target = params.get('target')
             self.epoch = params.get('epoch')
-            self.tolerance = params.get('tolerance')
             self.learningRate = params.get('learningRate')
-            self.split = params.get('split')
+            self.layer_size = params.get('layers')
             self.data = pd.read_json(StringIO(json.dumps(params.get('data', {}))))
 
-            if not all([self.algorithm, self.target, self.epoch, self.tolerance, self.learningRate, self.split]):
+            if not all([self.algorithm, self.target, self.epoch, self.learningRate]):
                 self.error = "Missing required parameters."
-        
+
         except Exception as e:
             self.error = str(e)
 
@@ -46,26 +46,25 @@ class Model:
         return {
             "algorithm": self.algorithm,
             "epoch": self.epoch,
-            "tolerance": self.tolerance,
             "learningRate": self.learningRate
         }
+    
 
 @csrf_exempt
 def build_model(request):
+
     model = Model(request)
+    
 
     if hasattr(model, 'error'):
         return JsonResponse({"error": model.error}, status=400)
 
     if model.algorithm == 'linear_regression':
-        train_ratio = model.split
-        test_ratio = (1 - train_ratio) / 2
-        validation_ratio = test_ratio
-        result = regression_fit(model.data, model.target)
+        result = regression_fit(model.data, model.target, epochs=model.epoch, lr=model.learningRate, hidden_sizes=model.layer_size)
 
     elif model.algorithm == 'logistic_regression':
         ml_model = Classification()
-        result = ml_model.fit(df=model.data, target=model.target, layer_sizes=[64, 32])
+        result = ml_model.fit(df=model.data, target=model.target, epochs=model.epoch, lr=model.learningRate, hidden_sizes=model.layer_size)
 
     else:
         return JsonResponse({"error": "Unsupported algorithm specified."}, status=400)
@@ -74,3 +73,4 @@ def build_model(request):
     serializable_result = convert_to_serializable(result)
 
     return JsonResponse(serializable_result, safe=False)
+

@@ -1,69 +1,35 @@
 import { useState, useEffect } from "react";
 import NavBar from "../mainPage/navbar";
 import { useLocation } from "react-router-dom";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import axios from "axios";
+
 import "../../styles/train_results.css";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
 const TrainModel = () => {
-  const [res, setRes] = useState(null);
+  const [res, setRes] = useState();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modelName, setModelName] = useState("");
   const location = useLocation();
-  const { data, algorithm, epoch, tolerance, learningRate, target, split } =
-    location.state || {};
+  const { data, algorithm, epoch, learningRate, target, layers } = location.state || {};
 
   useEffect(() => {
     const trainModel = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8000/api/buildmodel/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            data,
-            algorithm,
-            epoch,
-            tolerance,
-            learningRate,
-            target,
-            split,
-          }),
+        const response = await axios.post("http://localhost:8000/api/buildmodel/", {
+          data,
+          algorithm,
+          epoch,
+          learningRate,
+          target,
+          layers,
         });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            `HTTP error! status: ${response.status}, message: ${errorData.error}`
-          );
-        }
-
-        const result = await response.json();
-        setRes(result);
+        setRes(response.data);
       } catch (err) {
         console.error("Model eğitim hatası:", err);
-        setError(err.message || "Model eğitimi sırasında bir hata oluştu.");
+        setError(err.response?.data?.error || err.message || "Bilinmeyen hata oluştu.");
       } finally {
         setLoading(false);
       }
@@ -72,178 +38,157 @@ const TrainModel = () => {
     if (data) {
       trainModel();
     }
-  }, [data, algorithm, epoch, tolerance, learningRate,target,split]);
+  }, [data, algorithm, epoch, learningRate, target, layers]);
 
-  if (loading) {
-    return (
-      <>
-      <div className="loader-container">
-        <div className="loader-ring"></div>
-        <p className="loader-p">Model eğitiliyor... Lütfen bekleyin.</p>
+  const saveLayer = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Lütfen oturum açın.");
+      return;
+    }
 
-      </div>
-    </>
-    );
-  }
+    if (!modelName) {
+      setError("Lütfen model için bir isim girin.");
+      return;
+    }
 
-  if (error) {
-    return (
-      <div className="error-container">
-        <p className="error-message">Hata: {error}</p>
-      </div>
-    );
-  }
-
-  if (!res) {
-    return null;
-  }
-
-  let chartData = null;
-  let chartData_v = null;
-
-  if (res && res.history && Array.isArray(res.history)) {
-    chartData = {
-      labels: res.history.map((item) => item.iteration),
-      datasets: [
+    try {
+      await axios.post(
+        "http://localhost:3000/save_model",
         {
-          label: "Kayıp (Loss)",
-          data: res.history.map((item) => item.loss),
-          fill: false,
-          backgroundColor: "rgb(75, 192, 192)",
-          borderColor: "rgba(75, 192, 192, 0.2)",
+          weights: res.weights,
+          name: modelName,
         },
-      ],
-    };
-  }
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: "Eğitim Kayıp Grafiği",
-        font: {
-          size: 16,
-        },
-      },
-    },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Model başarıyla kaydedildi!");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      setError(error.response?.data?.message || "Model kaydedilirken hata oluştu.");
+    }
   };
 
   const downloadLogs = () => {
-    if (res && res.history && Array.isArray(res.history)) {
-      const csv = convertToCSV(res.history);
+    if (res?.weights && Array.isArray(res.weights)) {
+      const json = JSON.stringify(
+        {
+          weights: res.weights,
+          bias: res.bias,
+        },
+        null,
+        2
+      );
+
       const element = document.createElement("a");
-      const file = new Blob([csv], { type: "text/csv" });
+      const file = new Blob([json], { type: "application/json" });
       element.href = URL.createObjectURL(file);
-      element.download = "model_egitim_loglari.csv";
+      element.download = "model.vai";
       document.body.appendChild(element);
       element.click();
+    } else {
+      console.error("Veri formatı uygun değil.");
+      setError("Veriler doğru formatta değil. Lütfen tekrar deneyin.");
     }
-  };
-  
-  const convertToCSV = (data) => {
-    const header = Object.keys(data[0]).join(",");
-    const rows = data.map((item) => Object.values(item).join(","));
-    return `${header}\n${rows.join("\n")}`;
-  };
-
-  if (res && res.history && Array.isArray(res.history)) {
-    chartData_v = {
-      labels: res.history.map((item) => item.iteration),
-      datasets: [
-        {
-          label: "Validation Loss",
-          data: res.history.map((item) => item.validation_loss),
-          fill: false,
-          backgroundColor: "rgb(87, 75, 192)",
-          borderColor: "rgba(75, 192, 192, 0.2)",
-        },
-      ],
-    };
-  }
-
-  const chartOptions_v = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: "Validasyon Kayıp Grafiği",
-        font: {
-          size: 16,
-        },
-      },
-    },
   };
 
   const testScore = res?.test_score || 0;
-  const barWidth = testScore === 0 ? "10px" : `${testScore * 100}%`;
+  const barWidth = testScore === 0 ? "5%" : `${Math.max(testScore * 100, 10)}%`;
   const red = Math.round(255 * (1 - testScore));
   const green = Math.round(255 * testScore);
   const barColor = `rgb(${red}, ${green}, 0)`;
   const textColor = testScore === 0 ? "black" : "white";
-  
-
 
   return (
     <>
       <NavBar />
-      <div className="train-model-container">
-        <h2>Model Eğitim Sonuçları</h2>
-       <small> <strong style={{"color": "red"}}>Önemli: </strong>Sınıflandırma modellerinde grafikler, çok boyutludan 2 boyutluya çevrilmiştir. Renk sapması bu yüzden normal kabul edilmelidir.</small>
-        <hr />
-{chartData && (
-        <div className="tm-container">
-          
-            <div className="chart-container-2">
-              <Line data={chartData} options={chartOptions} />
+
+      {(res?.error || error) && (
+        <div className="error-container">
+          <p>Hata: {res?.error || error}</p>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="loader-container">
+          <div className="loader-ring"></div>
+          <p className="loader-p">Model eğitiliyor, lütfen bekleyin...</p>
+        </div>
+      ) : (
+        <>
+          <div className="train-model-container">
+            <h2>Model Eğitim Sonuçları</h2>
+            <small>
+              <strong style={{ color: "red" }}>Önemli: </strong>Sınıflandırma
+              modellerinde grafikler, çok boyutludan 2 boyutlaya çevrilmiştir. Renk
+              sapması bu yüzden normal kabul edilmelidir.
+            </small>
+            <hr />
+
+            {res?.graphs && (
+              <div className="plots">
+                {Object.values(res.graphs).map((graph, index) => (
+                  <img
+                    key={index}
+                    src={`data:image/png;base64,${graph}`}
+                    alt={`Graph ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div>
+              <h3 className="test_title">Test Doğruluk Skoru</h3>
+              <div className="test-score-bar-container">
+                <div
+                  className="test-score-bar"
+                  style={{ width: barWidth, backgroundColor: barColor, color: textColor }}
+                >
+                  {testScore.toFixed(4)}
+                </div>
+              </div>
+              <div className="log_download_button_container">
+                <button className="log_download_button" onClick={downloadLogs}>
+                  Modeli İndir
+                </button>
+                <button
+                  className="log_download_button"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Modeli Kütüphaneme Kaydet
+                </button>
+              </div>
             </div>
-         
-          {chartData_v && (
-            <div className="chart-container">
-              <Line data={chartData_v} options={chartOptions_v} />
+          </div>
+
+          {isModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h3>Model Adı Girin</h3>
+                <input
+                  type="text"
+                  value={modelName}
+                  onChange={(e) => setModelName(e.target.value)}
+                  placeholder="Modelin adı"
+                />
+                <div className="modal-buttons">
+                  <button onClick={saveLayer}>Kaydet</button>
+                  <button onClick={() => setIsModalOpen(false)}>İptal</button>
+                </div>
+              </div>
             </div>
           )}
-        </div>
- )}
+        </>
+      )}
 
-{res.graphs && (
-  <div className="plots">
-    {Object.values(res.graphs).map((graph, index) => (
-      <img key={index} src={`data:image/png;base64,${graph}`} alt={`Graph ${index + 1}`} />
-    ))}
-  </div>
-)}
-
-        <div>
-        <h3 className="test_title">Test Doğruluk Skoru</h3>
-          <div className="test-score-bar-container">
-            
-          <div
-  className="test-score-bar"
-  style={{ width: barWidth, backgroundColor: barColor, color: textColor }}
->
-  {testScore.toFixed(4)}
-</div>
-
-          </div>
-          <div className="log_download_button_container">
-          <button className="log_download_button" onClick={downloadLogs}>Log Dosyalarını İndir</button>
-          </div>
-          <h3>Model Bilgileri</h3>
-          <pre>{JSON.stringify(res, null, 2)}</pre>
-        </div>
+      <div className="footer">
+        <p>2025 - Visual AI</p>
+        <a href="#">Hakkında</a>
+        <a href="#">Yapımcı Profili</a>
       </div>
     </>
   );

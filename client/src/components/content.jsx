@@ -36,7 +36,7 @@ const MainContent = () => {
             />
             </div>
             <p>Browse through your saved models.</p>
-            <a href="/my_models" className="content-button">
+            <a href="/user_models" className="content-button">
               Model Library
             </a>
           </div>

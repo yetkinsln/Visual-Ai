@@ -124,6 +124,8 @@ class Classification():
 
             if epoch % 500 == 0:
                 print(f"Epoch {epoch}, Loss: {loss:.4f}")
+            if np.isnan(loss):
+                return {"error": f"Öğrenme oranınız,bu model için uygun değil. Lütfen küçültmeyi deneyin. (Şu anki: {lr})"}
 
         return best_weights, best_biases, loss_history, val_loss_history, class_mapping
 
@@ -229,7 +231,7 @@ class Classification():
         return np.array([reversed_mapping[pred] for pred in predictions])
 
 
-    def fit(self, df, target, layer_sizes):
+    def fit(self, df, target, epochs=100,lr=0.01, hidden_sizes= [128,64,32]):
         df = shuffle(df)
         try:
             df = self.vai_code(df)
@@ -244,7 +246,7 @@ class Classification():
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
             X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-            weights, biases, loss_history,val_loss_history,class_mapping = self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=layer_sizes)
+            weights, biases, loss_history,val_loss_history,class_mapping = self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=hidden_sizes, epochs=epochs,lr=lr)
             predictions = self.predict(X_test,y, weights, biases)
             test_score = self.accuracy(y_test, self.map_predictions(predictions,class_mapping))
             graphs = {
@@ -252,7 +254,11 @@ class Classification():
                 'test_graph': self.visualize_results(X_test, y_test,weights,biases, 'Test Seti Karar Çizgisi'),
                 'loss_graph': self.loss_graph(loss_history, "Training Loss"),
                 'val_loss_graph': self.loss_graph(val_loss_history, "Validation Loss")}
-            return {"weights": weights, "bias":biases, "graphs": graphs, "test_score": test_score}
+            weight_list = {
+                "weights": weights, "bias":biases
+
+            }
+            return {"weights": weight_list,"model":"classification", "graphs": graphs, "test_score": test_score}
         except RuntimeError as e:
             return
 

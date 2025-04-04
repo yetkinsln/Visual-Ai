@@ -3,11 +3,13 @@ import pandas as pd
 import json
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import copy
+import threading
+from django.views.decorators.csrf import csrf_exempt
+
 class Layer:
     def __init__(self):
         self.input = None
@@ -99,14 +101,16 @@ def loss_graph(err,title):
         
         return image_base64
 
-def fit(df, target, epochs=100, learning_rate=0.01, num_layer=3):
-    
+
+
+def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
+
     tmp_X = pd.get_dummies(df.drop(target, axis=1)).astype(np.float64)
     scaler = StandardScaler()
     tmp_X = scaler.fit_transform(tmp_X)
     
     err = []
-    val_err = []  # Doğrulama hatası listesi
+    val_err = []
     
     X = np.reshape(tmp_X, (tmp_X.shape[0], tmp_X.shape[1], 1))
     Y = np.reshape(df[target], (tmp_X.shape[0], 1, 1))
@@ -119,25 +123,26 @@ def fit(df, target, epochs=100, learning_rate=0.01, num_layer=3):
     
     X = X_train
     Y = y_train
-    
+
     if np.max(Y) != 0:
         Y = Y / np.max(Y)
-    
-    network = []
-    inp, out = X.shape[1], 16
 
-    for i in range(num_layer + 1):
-        network.append(Dense(inp, out))
-        
-        if out != 1:
-            network.append(Tanh())
-            
-        inp = out
-        if i == num_layer - 1:
-            out = 1
+    # 📌 Dinamik olarak ağ yapısını oluştur
+    network = []
+    inp = X.shape[1]  # Giriş boyutu
+    for out in hidden_sizes:
+        network.append(Dense(inp, out))  # Katman ekle
+        network.append(Tanh())  # Aktivasyon ekle
+        inp = out  # Yeni giriş boyutu bir önceki çıkış olur
+
+    # Son katmanı ekle (1 çıkışlı)
+    network.append(Dense(inp, 1))
+
     best_network = load_best_weights(network)
     val_err = [np.inf]
+
     for e in range(epochs):
+
         error = 0
         for x, y in zip(X, Y):
             output = x
@@ -147,12 +152,12 @@ def fit(df, target, epochs=100, learning_rate=0.01, num_layer=3):
             error += mse(y, output)
             grad = mse_prime(y, output)
             for layer in reversed(network):
-                grad = layer.backward(grad, learning_rate)
-        
+                grad = layer.backward(grad, lr)
+            
         error /= len(X)
         err.append(error)
-        
-        # Doğrulama hatasını hesapla
+        if np.isnan(error):
+            return {"error": f"Öğrenme oranınız,bu model için uygun değil. Lütfen küçültmeyi deneyin. (Şu anki: {lr})"}
 
         val_error = 0
         for x, y in zip(X_val, y_val):
@@ -166,10 +171,7 @@ def fit(df, target, epochs=100, learning_rate=0.01, num_layer=3):
             best_network.update(copy.deepcopy(network))
         val_err.append(val_error)
         print(f"Epoch: {e} err: {error} ")
-        
     
-    # Test hatasını hesapla
-
     test_error = 0
     for x, y in zip(X_test, y_test):
             output = x
@@ -185,4 +187,4 @@ def fit(df, target, epochs=100, learning_rate=0.01, num_layer=3):
     graphs = {"err_per_epoch": loss_graph(err,'Train Error per Epoch'),
               "val_err_per_epoch": loss_graph(val_err,'Validation Error per Epoch')}
     
-    return {"weights": json.dumps(network_architecture), "graphs": graphs, "test_score": test_score}
+    return {"weights": network_architecture, "graphs": graphs, "test_score": test_score}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../mainPage/navbar';
 import '../../styles/login.css';
@@ -11,6 +11,9 @@ const LoginScreen = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+  
+    console.log("Frontend'de Saklanan Token:", token);
+
     if (token) {
       navigate('/');
     }

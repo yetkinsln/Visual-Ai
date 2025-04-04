@@ -1,0 +1,116 @@
+.user-models-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* Title of the section */
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* List of models */
+.models-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.model-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.model-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* Model name styling */
+.model-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Model creation date styling */
+.model-create-date {
+  font-size: 14px;
+  color: #777;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Delete button */
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #e04343;
+}
+
+/* Error message styling */
+.error-message {
+  color: #d9534f;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Loading message styling */
+.loading-message {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+}
+
+.model-buttons {
+  display: flex;
+  gap: 10px; /* Butonlar arasında boşluk */
+}
+
+.download-button {
+  background-color: #4CAF50; /* Yeşil */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #45a049;
+}
+
+.delete-button {
+  background-color: #f44336; /* Kırmızı */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #da190b;
+}

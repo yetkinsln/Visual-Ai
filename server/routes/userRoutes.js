@@ -5,15 +5,18 @@ const User = require('../models/user');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
-
 router.get('/profile', authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).select("-password");
+        console.log("Token içeriği:", req.user); // 🔥 Debug için ekle
+
+        const user = await User.findById(req.user.userId || req.user._id).select("-password");
         res.status(200).json(user);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 // Login Route
 router.post('/login', async (req, res) => {
@@ -41,7 +44,7 @@ router.post('/login', async (req, res) => {
         }
 
         // JWT oluştur
-        const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1y" });
 
         res.status(200).json({ message: "Login successful!", token });
 

@@ -8,3 +8,10 @@
 20250225	13:02:55	0ad12c6c-a620-4141-b47b-09533e8aab7a	Error: Cannot set headers after they are sent to the client	POST	/login	http://localhost:5173
 20250225	13:04:01	cb3fd7cb-87f1-4534-ac98-c92d2c6c6d49	ReferenceError: alert is not defined	POST	/login	http://localhost:5173
 20250225	13:05:24	f09520d1-29ef-4085-963c-c03fef6154ab	Error: Cannot set headers after they are sent to the client	POST	/login	http://localhost:5173
+20250404	00:34:11	e3943e39-8429-4071-ad66-10ac834afb73	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	00:39:00	52c0cfe9-6071-4d0b-9e44-674414a1fad5	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	00:40:12	e5ecd7e0-8c39-4ff0-9d9a-03fd58428209	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	00:45:06	b6ba1c96-296c-4fe0-925e-dafd7dcc1b0d	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	00:46:15	51b8acc7-f60b-4600-8bd0-4f54f115a03e	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	00:59:01	e304d947-a160-40ce-a027-9a78c01ae3d9	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
+20250404	12:53:15	eca74023-1f09-4451-8b79-7cd5c535e468	PayloadTooLargeError: request entity too large	POST	/save_model	http://localhost:5173
