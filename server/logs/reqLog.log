@@ -220,3 +220,8 @@
 20250404	22:25:48	2b84f8ac-b661-48af-9636-5895627d2d84	POST	/save_model	http://localhost:5173
 20250404	22:26:42	bcc74ed5-fd9f-4be8-a050-1bd340ff8fe9	GET	/user_models	http://localhost:5173
 20250404	22:26:42	2ef3de89-ab67-4b69-a117-d3fad1a68406	GET	/user_models	http://localhost:5173
+20250414	23:58:08	6cd523fa-d106-4703-b3db-f3f4c7fbf442	POST	/users/signup	http://localhost:5173
+20250414	23:58:13	3977f509-3bad-4328-9e29-f1c1c798cb7d	POST	/users/login	http://localhost:5173
+20250415	00:07:44	4bf283fb-0006-4050-840f-9e10b5a6e372	POST	/save_model	http://localhost:5173
+20250415	00:07:49	2b2a7738-40ee-47c7-bbe7-187738f5d5c2	GET	/user_models	http://localhost:5173
+20250415	00:07:50	1da7a11d-f9a9-4c74-802c-8341e63d8a99	GET	/user_models	http://localhost:5173

@@ -87,7 +87,8 @@ const TrainModel = () => {
   };
 
   const downloadLogs = () => {
-    if (res?.weights && Array.isArray(res.weights)) {
+    if (res?.weights && typeof res.weights === "object") {
+      // weights ve bias verilerini JSON formatında kaydet
       const json = JSON.stringify(
         {
           weights: res.weights,
@@ -96,11 +97,11 @@ const TrainModel = () => {
         null,
         2
       );
-
+  
       const element = document.createElement("a");
       const file = new Blob([json], { type: "application/json" });
       element.href = URL.createObjectURL(file);
-      element.download = "model.vai";
+      element.download = "model.json"; // Dosya adı değiştirildi
       document.body.appendChild(element);
       element.click();
     } else {
@@ -108,6 +109,7 @@ const TrainModel = () => {
       setError("Veriler doğru formatta değil. Lütfen tekrar deneyin.");
     }
   };
+  
 
   const testScore = res?.test_score || 0;
   const barWidth = testScore === 0 ? "5%" : `${Math.max(testScore * 100, 10)}%`;
