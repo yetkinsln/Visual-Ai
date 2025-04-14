@@ -29,6 +29,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -40,9 +43,10 @@ INSTALLED_APPS = [
     'corsheaders',
     "analyzer",
     "model_schemas",
+    'channels',
 
 ]
-
+ASGI_APPLICATION = 'pythonServer.asgi.application'
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",

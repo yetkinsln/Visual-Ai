@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
-import json
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import copy
-import threading
+import time
+import asyncio
 from django.views.decorators.csrf import csrf_exempt
 
 class Layer:
@@ -103,7 +103,8 @@ def loss_graph(err,title):
 
 
 
-def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
+
+async def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
 
     tmp_X = pd.get_dummies(df.drop(target, axis=1)).astype(np.float64)
     scaler = StandardScaler()
@@ -143,6 +144,7 @@ def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
 
     for e in range(epochs):
 
+        await asyncio.sleep(0.01)
         error = 0
         for x, y in zip(X, Y):
             output = x

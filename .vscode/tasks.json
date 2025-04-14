@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Client Server",
+      "type": "npm",
+      "script": "dev",
+      "options": {
+        "cwd": "${workspaceFolder}/client"
+      },
+      "presentation": {
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Backend Server",
+      "type": "npm",
+      "script": "start",
+      "options": {
+        "cwd": "${workspaceFolder}/server"
+      },
+      "presentation": {
+        "panel": "new"
+      }
+    },
+    {
+      "label": "ML Backend",
+      "type":"process",
+      "command": "cmd.exe",
+      "args": [
+        "/k",
+        "Scripts\\activate && cd pythonServer && daphne pythonServer.asgi:application"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/ml-backend"
+      },
+      "presentation": {
+        "panel":"dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Tüm Sunucular",
+      "dependsOn": [
+        "Backend Server",
+        "Client Server",
+        "ML Backend"
+      ],
+      "dependsOrder":"parallel"
+    }
+  ]
+}
+

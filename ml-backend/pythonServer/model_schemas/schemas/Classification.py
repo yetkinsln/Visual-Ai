@@ -9,6 +9,7 @@ from sklearn.decomposition import PCA
 from sklearn.utils import shuffle
 import base64
 from io import BytesIO
+import asyncio
 class Classification():
     def initialize_weights(self, input_size, hidden_sizes, output_size):
         weights, biases, momentums_w, momentums_b, velocities_w, velocities_b = [], [], [], [], [], []
@@ -56,7 +57,7 @@ class Classification():
         y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
         return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))
 
-    def train_mlp_adam(self, X, y, X_val, y_val, hidden_sizes=[128, 64, 32], lr=0.001, epochs=4000, beta1=0.9, beta2=0.999, epsilon=1e-8):
+    async def train_mlp_adam(self, X, y, X_val, y_val, hidden_sizes=[128, 64, 32], lr=0.001, epochs=4000, beta1=0.9, beta2=0.999, epsilon=1e-8):
         loss_history, val_loss_history = [], []
         input_size = X.shape[1]
         unique_classes = np.unique(y)
@@ -74,6 +75,7 @@ class Classification():
         best_weights, best_biases = weights[:], biases[:]
 
         for epoch in range(epochs):
+            await asyncio.sleep(0.01)
             activations = [X]
             for i in range(len(hidden_sizes)):
                 Z = np.dot(activations[-1], weights[i]) + biases[i]
@@ -231,7 +233,7 @@ class Classification():
         return np.array([reversed_mapping[pred] for pred in predictions])
 
 
-    def fit(self, df, target, epochs=100,lr=0.01, hidden_sizes= [128,64,32]):
+    async def fit(self, df, target, epochs=100,lr=0.01, hidden_sizes= [128,64,32]):
         df = shuffle(df)
         try:
             df = self.vai_code(df)
@@ -246,7 +248,7 @@ class Classification():
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
             X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-            weights, biases, loss_history,val_loss_history,class_mapping = self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=hidden_sizes, epochs=epochs,lr=lr)
+            weights, biases, loss_history,val_loss_history,class_mapping = await self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=hidden_sizes, epochs=epochs,lr=lr)
             predictions = self.predict(X_test,y, weights, biases)
             test_score = self.accuracy(y_test, self.map_predictions(predictions,class_mapping))
             graphs = {

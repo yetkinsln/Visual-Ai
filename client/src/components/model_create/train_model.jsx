@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBar from "../mainPage/navbar";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-
+import { v4 as uuidv4 } from 'uuid';
 import "../../styles/train_results.css";
 
 const TrainModel = () => {
@@ -13,11 +13,14 @@ const TrainModel = () => {
   const [modelName, setModelName] = useState("");
   const location = useLocation();
   const { data, algorithm, epoch, learningRate, target, layers } = location.state || {};
-
+  const [channel, setChannel] = useState(null);
   useEffect(() => {
     const trainModel = async () => {
       try {
         setLoading(true);
+        const newChannel = uuidv4();
+        setChannel(newChannel);
+  
         const response = await axios.post("http://localhost:8000/api/buildmodel/", {
           data,
           algorithm,
@@ -25,6 +28,7 @@ const TrainModel = () => {
           learningRate,
           target,
           layers,
+          channel: newChannel, // channel bilgisini isteğe ekle
         });
         setRes(response.data);
       } catch (err) {
@@ -34,12 +38,21 @@ const TrainModel = () => {
         setLoading(false);
       }
     };
-
+  
     if (data) {
       trainModel();
     }
   }, [data, algorithm, epoch, learningRate, target, layers]);
 
+  const cancelTraining = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/cancel/", { channel: channel });
+      alert("Eğitim iptal edildi.");
+    } catch (err) {
+      console.error("İptal hatası:", err);
+      setError(err.response?.data?.error || err.message || "İptal işlemi başarısız oldu.");
+    }
+  };
   const saveLayer = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -117,6 +130,12 @@ const TrainModel = () => {
         <div className="loader-container">
           <div className="loader-ring"></div>
           <p className="loader-p">Model eğitiliyor, lütfen bekleyin...</p>
+          {channel && (
+              <button className="log_download_button" onClick={cancelTraining}>
+                Eğitimi İptal Et
+              </button>
+            )}
+        
         </div>
       ) : (
         <>
