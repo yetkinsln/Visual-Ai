@@ -81,6 +81,7 @@ const TrainModel = () => {
           target: res.target,
           columns: res.columns,
           frames: res.frames,
+          mapping: res.mapping || null,
         },
         {
           headers: {
@@ -109,6 +110,8 @@ const TrainModel = () => {
           max_y: res.max_y,
           target: res.target,
           columns: res.columns,
+          frames: res.frames,
+          mapping: res.mapping || null,
         },
         null,
         2

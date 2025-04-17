@@ -73,11 +73,75 @@ def Predict(model, data):
             return output.squeeze().tolist()  # Tek değer bile olsa liste olarak dön
 
         elif model['model_type'] == 'classification':
-            return {"error": "Classification modeli henüz desteklenmiyor."}
+            classifier = Classification()  # Sınıfın bir örneğini oluştur
+            weights = model['weights']['weights']
+            bias = model['weights']['bias']
+            
+            # Scaler'ı hazırla
+            scaler = StandardScaler()
+            scaler.mean_ = np.array(model['scaler']['mean'])
+            scaler.scale_ = np.array(model['scaler']['scale'])
+            
+            # Veriyi doğru formata dönüştürme
+            if type(data) == list:
+                sch = {}
+                for item in data:
+                    for k,v in item.items():
+                        if k not in sch:
+                            sch[k] = []
+                        sch[k].append(v)
+                data_df = pd.DataFrame(sch)
+            else:
+                data_df = pd.DataFrame([data])
+            
+            # Hedef değişkeni kaldır (eğer varsa)
+            if model['target'] in data_df.columns:
+                data_df = data_df.drop(columns=[model['target']])
+            frames = model['frames']
+            if model['target'] in frames:
+                frames.remove(model['target'])
+            # Sayısal dönüşümleri yap
+            for col in data_df.columns:
+                try:
+                    data_df[col] = pd.to_numeric(data_df[col])
+                except:
+                    pass
+            
+            # One-hot encoding işlemi
+            tmp_X = pd.get_dummies(data_df).astype(np.float64)
+            
+            
+            # Sütun isimlerini küçült
+            tmp_X.columns = tmp_X.columns.str.lower()
+            frames = [i.lower() for i in frames]
+            
+            # Eksik sütunları kontrol et
+            for col in tmp_X.columns:
+                if col not in frames:
+                    return {"error": f"Eğitimde hiç '{col}' verisi kullanılmamış. Lütfen modelinizi güncel verilerle tekrar eğitin."}
+            
+            # Eksik sütunları 0 ile doldur
+            for col in frames:
+                if col not in tmp_X.columns:
+                    tmp_X[col] = 0.0
+            
+            # Sütunları doğru sıraya koy
+            tmp_X = tmp_X[frames]
+            # Standartlaştır
+            tmp_X = scaler.transform(tmp_X)
+            
+            # Tahmin yap
+            # Olasılıklar yerine sınıf indeksleri elde et
+            
+            predictions = classifier.predict(tmp_X, weights, bias)
+            
+            # Orijinal sınıf etiketlerine dönüştür
+            predictions = classifier.map_predictions(predictions, model['mapping'])
+            
+            
+            return predictions.tolist()
     except Exception as e:
-        return {"error": str(e)}
-    
-
+            return {"error": "Bir hata oluştu. Veri formatınızın eğitim formatıyla aynı olduğundan emin olun. Kategorik verileriniz varsa ve çok az eğitim örneği ile eğitildiyse, boyut uyuşmazlıkları olabilir." + str(e)}
 
 
 

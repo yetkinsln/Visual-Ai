@@ -70,8 +70,9 @@ const WorkWithModel = () => {
 
   const handleFilePredict = async () => {
     const token = localStorage.getItem("token");
-  
+    console.log(model)
     const response = await fetch("http://localhost:8000/api/predict/", {
+      
       method: "POST",
       headers: {
         "Content-Type": "application/json",

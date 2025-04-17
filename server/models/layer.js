@@ -13,7 +13,8 @@ const LayerSchema = new mongoose.Schema(
     max_y: Number,
     target: String,
     columns: [String],
-    frames: [String], // Array of strings for frames
+    frames: [String],
+    mapping: Object // Array of strings for frames
   },
   {
     timestamps: true, // This will automatically add createdAt and updatedAt fields

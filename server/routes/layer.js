@@ -23,6 +23,7 @@ router.post("/save_model", verifyToken, async (req, res) => {
             target,
             columns,
             frames,
+            mapping,
             name,
             userId,
           } = req.body;
@@ -37,6 +38,7 @@ router.post("/save_model", verifyToken, async (req, res) => {
             target,
             columns,
             frames,
+            mapping,
             name,
         
         });

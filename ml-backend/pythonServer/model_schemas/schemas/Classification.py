@@ -131,7 +131,7 @@ class Classification():
 
         return best_weights, best_biases, loss_history, val_loss_history, class_mapping
 
-    def predict(self, X, y, weights, biases):
+    def predict(self, X,weights, biases):
         activations = [X]
         for i in range(len(weights) - 1):
             Z = np.dot(activations[-1], weights[i]) + biases[i]
@@ -175,7 +175,7 @@ class Classification():
             grid = np.c_[xx.ravel(), yy.ravel()]
 
             # PCA'dan ters dönüşüm yapmadan doğrudan 2D grid üzerinde tahmin yap
-            Z = self.predict(pca.inverse_transform(grid), y, weights, biases)
+            Z = self.predict(pca.inverse_transform(grid), weights, biases)
             Z = Z.reshape(xx.shape)
 
             plt.figure(figsize=(10, 6))
@@ -218,12 +218,6 @@ class Classification():
         
         return image_base64
 
-    def vai_code(self, df):
-        categorical_cols = df.select_dtypes(include=['object']).columns
-        for col in categorical_cols:
-            df[col] = df[col].astype('category').cat.codes
-        return df
-
     def accuracy(self, y_true, y_pred):
 
         return np.mean(y_true == y_pred)
@@ -232,24 +226,52 @@ class Classification():
         reversed_mapping = {v: k for k, v in class_mapping.items()}
         return np.array([reversed_mapping[pred] for pred in predictions])
 
-
+    def make_json_serializable(self,class_mapping):
+        """
+        Dictionary'yi JSON serileştirilebilir hale getirir.
+        Tüm anahtarları string'e dönüştürür.
+        """
+        new_mapping = {}
+        for k, v in class_mapping.items():
+            # Anahtarı string'e dönüştür
+            key_str = str(k)
+            
+            # Değer bir dictionary ise, onu da işle
+            if isinstance(v, dict):
+                v = self.make_json_serializable(v)
+            # Değer bir NumPy array veya başka bir özel nesne ise
+            elif hasattr(v, 'tolist') and callable(getattr(v, 'tolist')):
+                v = v.tolist()
+            elif hasattr(v, 'item') and callable(getattr(v, 'item')):
+                v = v.item()
+            
+            new_mapping[key_str] = v
+        
+        return new_mapping
     async def fit(self, df, target, epochs=100,lr=0.01, hidden_sizes= [128,64,32]):
-        df = shuffle(df)
+        columns = df.columns.tolist()
+        for col in df.columns:
+                try:
+                    df[col] = pd.to_numeric(df[col])
+                except:
+                    pass
         try:
-            df = self.vai_code(df)
-            X = df.drop(target, axis=1).values
+            df = pd.get_dummies(df).astype(np.float64)
+            
+            frames = df.columns.tolist()
+            X = df.drop(target, axis=1).astype(np.float64)
             y = df[target].values
 
             scaler = StandardScaler()
             X = scaler.fit_transform(X)
-
+            scaler = {"mean": scaler.mean_.tolist(), "scale": scaler.scale_.tolist()}
 
 
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
             X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
             weights, biases, loss_history,val_loss_history,class_mapping = await self.train_mlp_adam(X_train, y_train,X_val, y_val, hidden_sizes=hidden_sizes, epochs=epochs,lr=lr)
-            predictions = self.predict(X_test,y, weights, biases)
+            predictions = self.predict(X_test,weights, biases)
             test_score = self.accuracy(y_test, self.map_predictions(predictions,class_mapping))
             graphs = {
                 'train_graph': self.visualize_results(X_train, y_train,weights,biases, 'Eğitim Seti Karar Çizgisi'),
@@ -257,10 +279,11 @@ class Classification():
                 'loss_graph': self.loss_graph(loss_history, "Training Loss"),
                 'val_loss_graph': self.loss_graph(val_loss_history, "Validation Loss")}
             weight_list = {
-                "weights": weights, "bias":biases
-
-            }
-            return {"weights": weight_list,"model":"classification", "graphs": graphs, "test_score": test_score}
+                "weights": weights, "bias":biases}
+            
+            json_serializable_class_mapping = self.make_json_serializable(class_mapping)
+       
+            return {"weights": weight_list,"model":"classification", "graphs": graphs, "test_score": test_score, "mapping": json_serializable_class_mapping, "target": target, "scaler": scaler, "frames": frames, "max_y": 0,"columns": columns,"model_type":"classification"}
         except RuntimeError as e:
             return
 
