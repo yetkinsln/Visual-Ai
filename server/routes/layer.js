@@ -14,12 +14,29 @@ router.post("/save_model", verifyToken, async (req, res) => {
             return res.status(401).json({ message: "Unauthorized: User ID missing" });
         }
 
-        const {  weights,name } = req.body;
+        const {
+            weights,
+            test_score,
+            model_type,
+            scaler,
+            max_y,
+            target,
+            columns,
+            frames,
+            name,
+            userId,
+          } = req.body;
 
         const newLayer = new Layer({
             userId: req.user.userId, // ✅ req.user.userId kullanıyoruz
-
             weights,
+            testScore: test_score,
+            model_type,
+            scaler,
+            max_y,
+            target,
+            columns,
+            frames,
             name,
         
         });

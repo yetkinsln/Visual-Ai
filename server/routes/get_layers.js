@@ -34,4 +34,22 @@ router.delete("/user_models/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/user_models/:id", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const modelId = req.params.id;
+
+    const loadedModel = await Layer.findOne({ _id: modelId, userId: userId });
+
+    if (!loadedModel) {
+      return res.status(404).json({ message: "Model bulunamadı." });
+    }
+
+    res.status(200).json(loadedModel);
+  } catch (err) {
+    res.status(500).json({ message: "Model yüklenirken hata oluştu.", error: err.message });
+  }
+});
+
+
 module.exports = router;

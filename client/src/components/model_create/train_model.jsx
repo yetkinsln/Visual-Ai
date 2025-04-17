@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import NavBar from "../mainPage/navbar";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -14,7 +14,9 @@ const TrainModel = () => {
   const location = useLocation();
   const { data, algorithm, epoch, learningRate, target, layers } = location.state || {};
   const [channel, setChannel] = useState(null);
+  const didRunRef = useRef(false);
   useEffect(() => {
+    if (!data || didRunRef.current) return;
     const trainModel = async () => {
       try {
         setLoading(true);
@@ -41,6 +43,7 @@ const TrainModel = () => {
   
     if (data) {
       trainModel();
+      didRunRef.current = true;
     }
   }, [data, algorithm, epoch, learningRate, target, layers]);
 
@@ -71,6 +74,13 @@ const TrainModel = () => {
         {
           weights: res.weights,
           name: modelName,
+          testScore: res.test_score,
+          model_type:res.model_type,
+          scaler: res.scaler,
+          max_y: res.max_y,
+          target: res.target,
+          columns: res.columns,
+          frames: res.frames,
         },
         {
           headers: {
@@ -92,7 +102,13 @@ const TrainModel = () => {
       const json = JSON.stringify(
         {
           weights: res.weights,
-          bias: res.bias,
+          name: modelName,
+          testScore: res.test_score,
+          model_type:res.model_type,
+          scaler: res.scaler,
+          max_y: res.max_y,
+          target: res.target,
+          columns: res.columns,
         },
         null,
         2

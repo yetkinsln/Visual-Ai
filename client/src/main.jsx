@@ -10,6 +10,8 @@ import ModelCreate from './components/model_create/create_page'
 import PreTrain from './components/model_create/pre_train';
 import TrainModel from './components/model_create/train_model'
 import UserModels from "./components/model_library/get_models"
+import WorkWithModel from './components/model_library/work_with_model';
+
 
 
 
@@ -31,7 +33,7 @@ createRoot(document.getElementById('root')).render(
         <Route path='/train' element={<ProtectedRoute><PreTrain></PreTrain></ProtectedRoute>}/>
         <Route path='/train_model' element={<ProtectedRoute><TrainModel></TrainModel></ProtectedRoute>}/>
         <Route path='/user_models' element={<ProtectedRoute><UserModels></UserModels></ProtectedRoute>}/>
-
+        <Route path='/work_with_model' element={<ProtectedRoute><WorkWithModel></WorkWithModel></ProtectedRoute>}/>
         {/* Yanlış URL girildiğinde login sayfasına yönlendir */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

@@ -6,12 +6,12 @@ import "../../styles/create_page.css";
 
 const CsvUploader = () => {
   const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
   const [data, setData] = useState([]);
   const [info, setInfo] = useState(true);
-  const [analyze, setAnalyze] = useState("");
-  const [fileName, setFileName] = useState("");
   const [features, setFeatures] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState("");
+  const [analyze, setAnalyze] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,9 +32,9 @@ const CsvUploader = () => {
     }
 
     setFile(selectedFile);
-    setInfo(false);
     setFileName(selectedFile.name);
-    setAnalyze("");
+    setInfo(false);
+    setAnalyze(null);
 
     Papa.parse(selectedFile, {
       complete: (result) => {
@@ -44,9 +44,14 @@ const CsvUploader = () => {
       skipEmptyLines: true,
     });
   };
+
   const handleFeatureSelect = async (e) => {
     const feature = e.target.value;
+
+    if (feature === selectedFeature) return;
+
     setSelectedFeature(feature);
+    setAnalyze(null); // Temizle
 
     try {
       const response = await fetch("http://localhost:8000/api/analyze_csv/", {
@@ -67,7 +72,8 @@ const CsvUploader = () => {
       setAnalyze(result.problem_type || `Beklenmeyen Yanıt: ${JSON.stringify(result)}`);
     } catch (err) {
       console.error("API Hata:", err);
-    } 
+      setAnalyze("Bir hata oluştu.");
+    }
   };
 
   const goToTraining = () => {
@@ -84,7 +90,12 @@ const CsvUploader = () => {
       <div className="cp-body">
         <div className="cp-body-container">
           <div className="div">
-          {fileName &&  <><small>Seçilen Dosya:</small> <strong className="file-title">{fileName}</strong></>}
+            {fileName && (
+              <>
+                <small>Seçilen Dosya:</small>{" "}
+                <strong className="file-title">{fileName}</strong>
+              </>
+            )}
 
             {data.length > 0 && (
               <div className="table-container">
@@ -133,7 +144,7 @@ const CsvUploader = () => {
             </small>
             <hr />
             <select value={selectedFeature} onChange={handleFeatureSelect}>
-              <option value="" disabled>
+              <option value="" disabled hidden>
                 Neyi tahmin ediyoruz?
               </option>
               {features.map((feature) => (
@@ -143,60 +154,73 @@ const CsvUploader = () => {
               ))}
             </select>
 
-            {analyze && (
+            {analyze !== null && (
               <div className="analysis-result">
                 <h3>
-                  Algılanan Problem Türü: <span className="problem-type">{analyze}</span>
+                  Algılanan Problem Türü:{" "}
+                  <span className="problem-type">{analyze}</span>
                 </h3>
-                <small>Tahminin yanlış olduğunu düşünüyorsanız, sonraki aşamada değişebilirsiniz.</small>
+                <small>
+                  Tahminin yanlış olduğunu düşünüyorsanız, sonraki aşamada
+                  değişebilirsiniz.
+                </small>
               </div>
             )}
 
             <button onClick={goToTraining}>Devam Et</button>
-            {!analyze && (
+
+            {analyze === null && (
               <div className="cp-gif-main">
                 <img
                   src="https://i.pinimg.com/originals/6a/32/7c/6a327caa4b5c102de396a1c3aaa20e98.gif"
-                  alt=""
-                  
+                  alt="Yükleniyor"
                 />
               </div>
             )}
+
             {analyze === "Classification" && (
-             
               <div className="cp-card">
-                
-                 <div className="cp-gif">
-                <img src="https://i.gifer.com/E3K6.gif" alt="" className="cp-image"/>
-                <strong>About Classification</strong><br />
-                <small>Data belongs to a certain category. Output is a category.</small>
-              </div>
+                <div className="cp-gif">
+                  <img
+                    src="https://i.gifer.com/E3K6.gif"
+                    alt=""
+                    className="cp-image"
+                  />
+                  <strong>About Classification</strong>
+                  <br />
+                  <small>Data belongs to a certain category. Output is a category.</small>
+                </div>
               </div>
             )}
+
             {analyze === "Regression" && (
-
-<div className="cp-card">
-                
-<div className="cp-gif">
-<img src="https://gbhat.com/assets/gifs/polynomial_regression.gif" alt="" className="cp-image"/>
-<strong>About Regression</strong><br />
-<small>Data are numbers calculated based on inputs.</small>
-</div>
-</div>
-
+              <div className="cp-card">
+                <div className="cp-gif">
+                  <img
+                    src="https://gbhat.com/assets/gifs/polynomial_regression.gif"
+                    alt=""
+                    className="cp-image"
+                  />
+                  <strong>About Regression</strong>
+                  <br />
+                  <small>Data are numbers calculated based on inputs.</small>
+                </div>
+              </div>
             )}
 
             {analyze === "Time Series" && (
-
-<div className="cp-card">
-                
-<div className="cp-gif">
-<img src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif" alt="" className="cp-image"/>
-<strong>About Time Series</strong><br />
-<small>Data is associated with rows as well as columns.</small>
-</div>
-</div>
-
+              <div className="cp-card">
+                <div className="cp-gif">
+                  <img
+                    src="https://miro.medium.com/max/1400/0*bCS3EWiVfLIZqwIW.gif"
+                    alt=""
+                    className="cp-image"
+                  />
+                  <strong>About Time Series</strong>
+                  <br />
+                  <small>Data is associated with rows as well as columns.</small>
+                </div>
+              </div>
             )}
           </div>
         )}

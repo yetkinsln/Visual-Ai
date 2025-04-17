@@ -105,10 +105,15 @@ def loss_graph(err,title):
 
 
 async def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
-
+    columns = df.columns.tolist()
     tmp_X = pd.get_dummies(df.drop(target, axis=1)).astype(np.float64)
+    frames = tmp_X.columns.tolist()
     scaler = StandardScaler()
     tmp_X = scaler.fit_transform(tmp_X)
+    scaler_dict = {
+    "mean": scaler.mean_.tolist(),
+    "scale": scaler.scale_.tolist()
+}
     
     err = []
     val_err = []
@@ -181,7 +186,7 @@ async def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
                 output = layer.forward(output)
             test_error += mse(y, output)
         
-    test_error /= len(X_val)
+    test_error /= len(X_test)
     print(test_error)
     test_score = (1 - test_error) / (1 + test_error)
 
@@ -189,4 +194,4 @@ async def fit(df, target, epochs=100, lr=0.01, hidden_sizes=[128,64,32]):
     graphs = {"err_per_epoch": loss_graph(err,'Train Error per Epoch'),
               "val_err_per_epoch": loss_graph(val_err,'Validation Error per Epoch')}
     
-    return {"weights": network_architecture, "graphs": graphs, "test_score": test_score}
+    return {"weights": network_architecture, "graphs": graphs, "test_score": test_score, "model_type": "regression", "scaler": scaler_dict, "max_y": my, "target": target, "columns": columns,"frames":frames}

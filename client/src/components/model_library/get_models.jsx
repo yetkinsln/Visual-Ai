@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from '../mainPage/navbar'
 import '../../styles/get_models.css';
+import { useNavigate } from "react-router-dom";
 
 const UserModels = () => {
   const [models, setModels] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchUserModels = async () => {
     try {
@@ -41,6 +43,11 @@ const UserModels = () => {
       setError(err.response?.data?.message || "Model silinirken hata oluştu.");
     }
   };
+
+  const use_model = (model) => { 
+    navigate("/work_with_model", { state: { model: model } });
+  }
+
 
   const downloadModel = (model) => {
     const json = JSON.stringify(model, null, 2);
@@ -79,6 +86,7 @@ const UserModels = () => {
               </p>
             </div>
             <div className="model-buttons">
+              <button className="use-model-button"onClick={() => use_model(model)}>Kullan</button>
             <button className="download-button" onClick={() => downloadModel(model)}>
                 Modeli İndir
               </button>

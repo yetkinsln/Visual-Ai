@@ -7,7 +7,7 @@ from .schemas.Regression import fit as regression_fit
 from .schemas.Classification import Classification
 from io import StringIO
 import asyncio
-
+from .schemas.LoadModel import Predict
 tasks = {}
 
 # NumPy dizilerini JSON uyumlu hale getiren yardımcı fonksiyon
@@ -94,3 +94,13 @@ def cancel(request):
         return JsonResponse({"status": "training cancellation requested"})
     else:
         return JsonResponse({"error": "Invalid request method"}, status=400)
+    
+@csrf_exempt
+def predict(request):
+    if request.method == 'POST':
+        try:
+            params = json.loads(request.body)
+            result = Predict(params['model'], params['data'])
+            return JsonResponse(result, safe=False)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
