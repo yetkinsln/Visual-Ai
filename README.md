@@ -51,6 +51,7 @@ The problem type is automatically determined as soon as the target feature is se
 ## 🛠️ Technologies Used
 
 ### Backend
+- Express Node.js
 - Python
 - NumPy (core model and optimization implementations)
 - Django (API and business logic)
